@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit Install Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0e0f11;--surface:#16181c;--surface2:#1e2128;--border:#2a2d35;
+    --accent:#f0c040;--text:#e8eaf0;--muted:#6b7280;
+    --danger:#e05555;--success:#4caf7d;--installed:#4caf7d;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+
+.spinner-wrap{display:flex;align-items:center;justify-content:center;gap:10px;padding:2rem;color:var(–muted);font-family:‘DM Mono’,monospace;font-size:.85rem;}
+.spinner{width:20px;height:20px;border:2px solid var(–border);border-top-color:var(–accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes shake{0%{transform:translateX(0);}20%{transform:translateX(-5px);}40%{transform:translateX(5px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}100%{transform:translateX(0);}}
+
+nav{display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:60px;background:var(–surface);border-bottom:1px solid var(–border);position:sticky;top:0;z-index:100;}
+.nav-brand{font-family:‘Bebas Neue’,sans-serif;font-size:1.4rem;letter-spacing:2px;color:var(–accent);}
+.nav-brand span{color:var(–muted);font-size:.8rem;font-family:‘DM Mono’,monospace;letter-spacing:1px;margin-left:8px;}
+.nav-tabs{display:flex;gap:4px;}
+.tab-btn{background:none;border:none;color:var(–muted);font-family:‘DM Sans’,sans-serif;font-size:.82rem;font-weight:500;padding:6px 12px;border-radius:6px;cursor:pointer;transition:all .2s;letter-spacing:.5px;text-transform:uppercase;}
+.tab-btn:hover{color:var(–text);background:var(–surface2);}
+.tab-btn.active{color:var(–accent);background:rgba(240,192,64,.1);}
+
+.page{display:none;padding:2rem 1.5rem;max-width:1020px;margin:0 auto;}
+.page.active{display:block;}
+.page-title{font-family:‘Bebas Neue’,sans-serif;font-size:2.2rem;letter-spacing:2px;line-height:1;}
+.page-title span{color:var(–accent);}
+.page-sub{color:var(–muted);font-size:.82rem;margin-top:4px;font-family:‘DM Mono’,monospace;margin-bottom:1.8rem;}
+
+.card{background:var(–surface);border:1px solid var(–border);border-radius:12px;padding:1.8rem;}
+.form-grid{display:grid;grid-template-columns:.9fr 1.5fr 1.5fr 1.2fr;gap:1rem;margin-bottom:1rem;}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.2rem;}
+.field{display:flex;flex-direction:column;gap:6px;}
+label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(–muted);font-family:‘DM Mono’,monospace;}
+
+input[type=“text”],input[type=“date”],textarea{
+background:var(–surface2);border:1.5px solid var(–border);border-radius:8px;
+color:var(–text);font-family:‘DM Mono’,monospace;font-size:.9rem;
+padding:10px 14px;transition:border-color .2s,background .2s,box-shadow .2s;outline:none;width:100%;
+}
+input[type=“text”]:focus,input[type=“date”]:focus,textarea:focus{border-color:var(–accent);box-shadow:0 0 0 3px rgba(240,192,64,.08);}
+input[type=“text”]::placeholder,textarea::placeholder{color:var(–muted);}
+input[type=“date”]::-webkit-calendar-picker-indicator{filter:invert(.6);cursor:pointer;}
+textarea{resize:vertical;min-height:60px;font-size:.85rem;}
+
+.ptask-wrap{position:relative;display:flex;align-items:center;}
+.ptask-prefix{position:absolute;left:0;top:0;bottom:0;display:flex;align-items:center;padding:0 10px 0 14px;font-family:‘DM Mono’,monospace;font-size:.9rem;font-weight:600;color:var(–accent);pointer-events:none;border-right:1px solid var(–border);background:rgba(240,192,64,.07);border-radius:8px 0 0 8px;white-space:nowrap;}
+.ptask-input{padding-left:88px !important;}
+
+.tech-dropdown-wrap{position:relative;}
+.tech-trigger{background:var(–surface2);border:1.5px solid var(–border);border-radius:8px;color:var(–text);font-family:‘DM Mono’,monospace;font-size:.88rem;padding:10px 36px 10px 14px;cursor:pointer;display:flex;align-items:center;min-height:42px;flex-wrap:wrap;gap:4px;transition:border-color .2s,box-shadow .2s;user-select:none;}
+.tech-trigger:hover{border-color:var(–accent);}
+.tech-trigger.open{border-color:var(–accent);box-shadow:0 0 0 3px rgba(240,192,64,.08);}
+.tech-trigger-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(–muted);font-size:.85rem;pointer-events:none;transition:transform .2s;}
+.tech-trigger.open .tech-trigger-arrow{transform:translateY(-50%) rotate(180deg);}
+.tech-placeholder{color:var(–muted);}
+.tech-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(240,192,64,.15);color:var(–accent);border:1px solid rgba(240,192,64,.3);border-radius:4px;padding:2px 6px;font-size:.75rem;font-weight:600;white-space:nowrap;}
+.tech-tag-x{cursor:pointer;opacity:.7;font-size:.65rem;line-height:1;}
+.tech-tag-x:hover{opacity:1;}
+.tech-menu{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:50;background:var(–surface);border:1px solid var(–border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.4);overflow:hidden;display:none;}
+.tech-menu.open{display:block;}
+.tech-menu-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background .15s;font-family:‘DM Sans’,sans-serif;font-size:.88rem;}
+.tech-menu-item:hover{background:var(–surface2);}
+.tech-menu-item.selected{background:rgba(240,192,64,.07);}
+.tech-check-box{width:16px;height:16px;flex-shrink:0;border:2px solid var(–border);border-radius:4px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.tech-menu-item.selected .tech-check-box{background:var(–accent);border-color:var(–accent);}
+.tech-check-mark{color:#111;font-size:.65rem;font-weight:700;display:none;}
+.tech-menu-item.selected .tech-check-mark{display:block;}
+.tech-menu-name{color:var(–text);}
+.tech-menu-item.selected .tech-menu-name{color:var(–accent);font-weight:600;}
+
+.field-error input[type=“text”],.field-error textarea{border-color:var(–danger)!important;background:rgba(224,85,85,.06)!important;box-shadow:0 0 0 3px rgba(224,85,85,.15)!important;animation:shake .3s ease;}
+.field-error label{color:var(–danger)!important;}
+.field-error .ptask-prefix{border-color:var(–danger);background:rgba(224,85,85,.08);color:var(–danger);}
+.field-error .tech-trigger{border-color:var(–danger)!important;background:rgba(224,85,85,.06)!important;box-shadow:0 0 0 3px rgba(224,85,85,.15)!important;animation:shake .3s ease;}
+.err-msg{display:none;font-size:.7rem;color:var(–danger);font-family:‘DM Mono’,monospace;margin-top:2px;}
+.field-error .err-msg{display:block;}
+.devices-error-wrap.field-error .field-label{color:var(–danger)!important;}
+.devices-error-wrap.field-error #devices-grid{border:1.5px solid var(–danger);border-radius:10px;padding:8px;background:rgba(224,85,85,.04);box-shadow:0 0 0 3px rgba(224,85,85,.1);animation:shake .3s ease;}
+.devices-error-wrap .err-msg{display:none;font-size:.7rem;color:var(–danger);font-family:‘DM Mono’,monospace;margin-top:-4px;margin-bottom:6px;}
+.devices-error-wrap.field-error .err-msg{display:block;}
+
+.autofill-hint{font-size:.72rem;color:var(–accent);font-family:‘DM Mono’,monospace;margin-top:3px;display:none;}
+.autofill-hint.show{display:block;}
+.field-label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(–muted);font-family:‘DM Mono’,monospace;margin-bottom:10px;}
+.field-label em{font-style:normal;font-weight:400;font-size:.7rem;text-transform:none;letter-spacing:0;}
+
+.val-banner{display:none;background:rgba(224,85,85,.1);border:1px solid rgba(224,85,85,.35);border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-family:‘DM Mono’,monospace;font-size:.82rem;color:#f08080;}
+.val-banner.show{display:flex;align-items:flex-start;gap:10px;}
+.val-banner ul{margin:4px 0 0 16px;}
+.val-banner li{margin-top:2px;}
+
+.devices-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:7px;margin-bottom:1.4rem;}
+.device-chip{display:flex;align-items:center;gap:9px;background:var(–surface2);border:1px solid var(–border);border-radius:8px;padding:9px 12px;cursor:pointer;transition:all .15s;user-select:none;}
+.device-chip:hover{border-color:rgba(240,192,64,.4);background:rgba(240,192,64,.04);}
+.device-chip.selected{border-color:var(–accent);background:rgba(240,192,64,.1);}
+.chip-box{width:16px;height:16px;flex-shrink:0;border:2px solid var(–border);border-radius:4px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.device-chip.selected .chip-box{background:var(–accent);border-color:var(–accent);}
+.chip-check{color:#111;font-size:.65rem;display:none;font-weight:700;}
+.device-chip.selected .chip-check{display:block;}
+.chip-label{font-size:.82rem;color:var(–text);line-height:1.2;}
+.device-chip.selected .chip-label{color:var(–accent);font-weight:500;}
+
+.alert{padding:10px 14px;border-radius:8px;font-size:.85rem;font-family:‘DM Mono’,monospace;margin-bottom:1rem;display:none;}
+.alert.show{display:block;}
+.alert.success{background:rgba(76,175,125,.12);border:1px solid rgba(76,175,125,.3);color:#80d4a8;}
+
+.form-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.btn-primary{background:var(–accent);color:#111;border:none;border-radius:8px;font-family:‘DM Sans’,sans-serif;font-weight:700;font-size:.9rem;padding:11px 28px;cursor:pointer;letter-spacing:.5px;transition:all .2s;text-transform:uppercase;}
+.btn-primary:hover{background:#f5ce60;transform:translateY(-1px);}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-ghost{background:none;color:var(–muted);border:1px solid var(–border);border-radius:8px;font-family:‘DM Sans’,sans-serif;font-size:.85rem;padding:11px 18px;cursor:pointer;transition:all .2s;}
+.btn-ghost:hover{color:var(–text);border-color:var(–muted);}
+.btn-danger{background:none;color:var(–danger);border:1px solid rgba(224,85,85,.3);border-radius:6px;font-size:.75rem;padding:4px 10px;cursor:pointer;font-family:‘DM Mono’,monospace;transition:all .2s;}
+.btn-danger:hover{background:rgba(224,85,85,.1);}
+.btn-export{background:rgba(76,175,125,.12);color:var(–success);border:1px solid rgba(76,175,125,.3);border-radius:8px;font-family:‘DM Sans’,sans-serif;font-size:.85rem;font-weight:600;padding:9px 18px;cursor:pointer;transition:all .2s;}
+.btn-export:hover{background:rgba(76,175,125,.2);}
+
+.section-label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(–muted);font-family:‘DM Mono’,monospace;margin-bottom:12px;margin-top:2rem;}
+
+.sbadge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:4px;font-size:.72rem;font-weight:600;white-space:nowrap;}
+.sbadge-dot{width:6px;height:6px;border-radius:50%;}
+.sbadge.completed{background:rgba(76,175,125,.12);color:var(–installed);border:1px solid rgba(76,175,125,.25);}
+
+.entries-table{width:100%;border-collapse:collapse;font-size:.85rem;}
+.entries-table th{text-align:left;padding:8px 12px;font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:var(–muted);font-family:‘DM Mono’,monospace;border-bottom:1px solid var(–border);}
+.entries-table td{padding:10px 12px;border-bottom:1px solid rgba(42,45,53,.6);font-family:‘DM Mono’,monospace;vertical-align:top;}
+.entries-table tr:last-child td{border-bottom:none;}
+.entries-table tr:hover td{background:rgba(255,255,255,.02);}
+
+.ptask-badge{background:rgba(240,192,64,.12);color:var(–accent);border:1px solid rgba(240,192,64,.25);border-radius:4px;padding:2px 8px;font-size:.78rem;font-weight:500;white-space:nowrap;}
+.prop-badge{background:rgba(100,160,255,.08);color:#7aaee8;border:1px solid rgba(100,160,255,.2);border-radius:4px;padding:2px 8px;font-size:.74rem;white-space:nowrap;display:block;margin-top:4px;}
+.tech-pills{display:flex;flex-wrap:wrap;gap:4px;}
+.tech-pill{background:rgba(240,192,64,.1);color:var(–accent);border:1px solid rgba(240,192,64,.2);border-radius:4px;padding:2px 7px;font-size:.72rem;white-space:nowrap;}
+.note-text{color:var(–muted);font-size:.78rem;font-style:italic;max-width:200px;}
+.ts-text{color:var(–muted);font-size:.74rem;white-space:nowrap;line-height:1.5;}
+.devices-pills{display:flex;flex-wrap:wrap;gap:4px;}
+.device-pill{background:rgba(224,122,48,.12);color:#e8a060;border:1px solid rgba(224,122,48,.2);border-radius:4px;padding:2px 7px;font-size:.72rem;white-space:nowrap;}
+.empty-state{text-align:center;padding:3rem 1rem;color:var(–muted);font-family:‘DM Mono’,monospace;font-size:.85rem;}
+.empty-state .icon{font-size:2rem;margin-bottom:10px;opacity:.4;}
+
+.dash-top-bar{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+.date-filter{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.date-filter label{font-size:.72rem;color:var(–muted);font-family:‘DM Mono’,monospace;text-transform:uppercase;letter-spacing:1px;white-space:nowrap;}
+.date-filter input[type=“date”]{width:148px;font-size:.82rem;padding:8px 10px;}
+.btn-clear-dates{background:none;color:var(–muted);border:1px solid var(–border);border-radius:6px;font-size:.78rem;padding:7px 12px;cursor:pointer;font-family:‘DM Mono’,monospace;white-space:nowrap;transition:all .2s;}
+.btn-clear-dates:hover{color:var(–text);border-color:var(–muted);}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;}
+.stat-card{background:var(–surface);border:1px solid var(–border);border-radius:10px;padding:1.2rem 1.4rem;}
+.stat-label{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:var(–muted);font-family:‘DM Mono’,monospace;margin-bottom:6px;}
+.stat-value{font-family:‘Bebas Neue’,sans-serif;font-size:2.2rem;letter-spacing:1px;color:var(–accent);line-height:1;}
+.dash-section-title{font-family:‘Bebas Neue’,sans-serif;font-size:1.4rem;letter-spacing:2px;color:var(–text);margin-bottom:1rem;}
+.dash-section-title span{color:var(–accent);}
+.dash-divider{border:none;border-top:1px solid var(–border);margin:0 0 2rem 0;}
+.tech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:2.5rem;}
+.tech-card{background:var(–surface);border:1px solid var(–border);border-radius:10px;padding:1.1rem 1.3rem;cursor:pointer;transition:all .2s;}
+.tech-card:hover{border-color:rgba(240,192,64,.4);transform:translateY(-1px);}
+.tech-card-top{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.tech-avatar{width:40px;height:40px;border-radius:50%;flex-shrink:0;background:rgba(240,192,64,.15);border:2px solid rgba(240,192,64,.3);display:flex;align-items:center;justify-content:center;font-family:‘Bebas Neue’,sans-serif;font-size:1rem;color:var(–accent);}
+.tech-info{min-width:0;flex:1;}
+.tech-card-name{font-weight:600;font-size:.9rem;color:var(–text);}
+.tech-card-count{font-family:‘DM Mono’,monospace;font-size:.78rem;color:var(–muted);margin-top:1px;}
+.tech-bar-wrap{background:var(–surface2);border-radius:4px;height:5px;width:100%;}
+.tech-bar{height:5px;border-radius:4px;background:var(–accent);}
+.project-block{background:var(–surface);border:1px solid var(–border);border-radius:12px;margin-bottom:1.2rem;overflow:hidden;}
+.project-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.4rem;background:var(–surface2);border-bottom:1px solid var(–border);cursor:pointer;user-select:none;}
+.project-header:hover{background:rgba(30,33,40,.95);}
+.project-name-wrap{display:flex;flex-direction:column;gap:2px;}
+.project-name{font-family:‘Bebas Neue’,sans-serif;font-size:1.3rem;letter-spacing:1.5px;}
+.project-propname{font-size:.78rem;color:#7aaee8;font-family:‘DM Mono’,monospace;}
+.project-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+.unit-count{background:var(–accent);color:#111;font-family:‘DM Mono’,monospace;font-size:.78rem;font-weight:700;padding:3px 10px;border-radius:20px;}
+.chevron{color:var(–muted);font-size:.8rem;transition:transform .2s;}
+.project-block.collapsed .chevron{transform:rotate(-90deg);}
+.project-block.collapsed .project-body{display:none;}
+.project-body{padding:0 1.4rem 1.2rem;}
+.dash-filters{display:flex;gap:10px;margin-bottom:1.2rem;flex-wrap:wrap;align-items:center;}
+.search-bar{position:relative;flex:1;min-width:200px;}
+.search-bar input{padding-left:38px;width:100%;}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(–muted);}
+.filter-select{background:var(–surface2);border:1px solid var(–border);border-radius:8px;color:var(–text);font-family:‘DM Mono’,monospace;font-size:.82rem;padding:10px 32px 10px 12px;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;}
+.filter-select:focus{border-color:var(–accent);}
+.filter-wrap{position:relative;}
+.filter-wrap::after{content:‘▾’;position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(–muted);font-size:.8rem;pointer-events:none;}
+.filter-wrap select option{background:#1e2128;}
+
+.period-tabs{display:flex;gap:4px;margin-bottom:2rem;flex-wrap:wrap;}
+.period-btn{background:var(–surface2);border:1px solid var(–border);color:var(–muted);font-family:‘DM Mono’,monospace;font-size:.78rem;padding:7px 16px;border-radius:6px;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.5px;}
+.period-btn:hover{color:var(–text);border-color:var(–muted);}
+.period-btn.active{background:rgba(240,192,64,.1);border-color:var(–accent);color:var(–accent);}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;padding:1rem;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(–surface);border:1px solid var(–border);border-radius:14px;max-width:780px;width:100%;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.6rem;border-bottom:1px solid var(–border);}
+.modal-title{font-family:‘Bebas Neue’,sans-serif;font-size:1.5rem;letter-spacing:2px;}
+.modal-title span{color:var(–accent);}
+.modal-close{background:none;border:none;color:var(–muted);font-size:1.4rem;cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .2s;}
+.modal-close:hover{color:var(–text);background:var(–surface2);}
+.modal-body{overflow-y:auto;padding:1.4rem 1.6rem;}
+.modal-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.4rem;}
+.modal-stat{background:var(–surface2);border:1px solid var(–border);border-radius:8px;padding:.9rem 1rem;}
+.modal-stat-label{font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:var(–muted);font-family:‘DM Mono’,monospace;margin-bottom:4px;}
+.modal-stat-val{font-family:‘Bebas Neue’,sans-serif;font-size:1.8rem;letter-spacing:1px;line-height:1;color:var(–accent);}
+
+@media(max-width:700px){
+.form-grid{grid-template-columns:1fr 1fr;}
+.form-grid-2{grid-template-columns:1fr;}
+.stats-row{grid-template-columns:1fr 1fr;}
+.page{padding:1.5rem 1rem;}
+.nav-brand span{display:none;}
+.devices-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}
+.tech-grid{grid-template-columns:1fr 1fr;}
+.modal-stats{grid-template-columns:1fr 1fr;}
+.nav-tabs .tab-btn{font-size:.72rem;padding:5px 8px;}
+}
+@media(max-width:420px){
+.form-grid{grid-template-columns:1fr;}
+.tech-grid{grid-template-columns:1fr;}
+.stats-row{grid-template-columns:1fr 1fr;}
+}
+</style>
+
+</head>
+<body>
+
+<div id="app">
+  <nav>
+    <div class="nav-brand">TRACKER <span>// UNIT INSTALLS</span></div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="showPage('entry',this)">➕ Enter Unit</button>
+      <button class="tab-btn" onclick="showPage('dashboard',this)">📊 Dashboard</button>
+      <button class="tab-btn" onclick="showPage('reports',this)">📋 Reports</button>
+    </div>
+  </nav>
+
+  <!-- ENTRY PAGE -->
+
+  <div class="page active" id="page-entry">
+    <div class="page-title">LOG <span>INSTALL</span></div>
+    <div class="page-sub">// all fields required · devices required · auto-marked completed</div>
+    <div class="card">
+      <div class="val-banner" id="val-banner">
+        <span>⚠</span>
+        <div><strong>Please fix the following:</strong><ul id="val-list"></ul></div>
+      </div>
+      <div id="alert-success" class="alert"></div>
+
+```
+  <div class="form-grid">
+    <div class="field" id="field-ptask">
+      <label>PTASK #</label>
+      <div class="ptask-wrap">
+        <span class="ptask-prefix">PTASK-</span>
+        <input type="text" id="input-ptask" class="ptask-input" placeholder="10045" oninput="onPtaskInput()"/>
+      </div>
+      <span class="autofill-hint" id="autofill-hint"></span>
+      <span class="err-msg">PTASK # is required</span>
+    </div>
+    <div class="field" id="field-property">
+      <label>Property Name</label>
+      <input type="text" id="input-property" placeholder="e.g. Riverside Apts" oninput="clearFieldErr('field-property')"/>
+      <span class="err-msg">Property Name is required</span>
+    </div>
+    <div class="field" id="field-address">
+      <label>Address / Unit</label>
+      <input type="text" id="input-address" placeholder="e.g. 204B Oak Street" oninput="clearFieldErr('field-address')"/>
+      <span class="err-msg">Address / Unit is required</span>
+    </div>
+    <div class="field" id="field-tech">
+      <label>Tech(s)</label>
+      <div class="tech-dropdown-wrap" id="tech-dropdown-wrap">
+        <div class="tech-trigger" id="tech-trigger" onclick="toggleTechMenu()">
+          <span class="tech-placeholder" id="tech-placeholder">— Select Tech(s) —</span>
+          <span class="tech-trigger-arrow">▾</span>
+        </div>
+        <div class="tech-menu" id="tech-menu"></div>
+      </div>
+      <span class="err-msg">At least one tech is required</span>
+    </div>
+  </div>
+
+  <div class="form-grid-2" style="margin-bottom:1.2rem;">
+    <div class="field">
+      <label>Notes <em style="font-style:normal;font-size:.7rem;text-transform:none;letter-spacing:0;color:var(--muted)">(optional)</em></label>
+      <textarea id="input-notes" placeholder="e.g. Customer wasn't home, needs follow-up..."></textarea>
+    </div>
+    <div></div>
+  </div>
+
+  <div class="devices-error-wrap" id="devices-wrap">
+    <div class="field-label">Devices Installed <em>(at least one required)</em></div>
+    <span class="err-msg">Please select at least one device</span>
+    <div class="devices-grid" id="devices-grid"></div>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn-primary" id="submit-btn" onclick="submitEntry()">✓ Record Unit</button>
+    <button class="btn-ghost" onclick="clearDevices()">Clear Devices</button>
+  </div>
+</div>
+
+<div class="section-label">Recent Entries</div>
+<div class="card" style="padding:0;overflow:hidden;"><div id="recent-list"></div></div>
+```
+
+  </div>
+
+  <!-- DASHBOARD PAGE -->
+
+  <div class="page" id="page-dashboard">
+    <div class="page-title">PROJECT <span>BREAKDOWN</span></div>
+    <div class="page-sub">// live data from Google Sheets · click a tech for details</div>
+
+```
+<div class="dash-filters" style="margin-bottom:1.2rem;">
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="dash-search" placeholder="Filter by PTASK, property, address, or tech..." oninput="renderDashboard()"/>
+  </div>
+  <div class="filter-wrap">
+    <select class="filter-select" id="filter-tech" onchange="renderDashboard()">
+      <option value="">All Techs</option>
+      <option>AJ</option><option>Josh</option><option>Joey</option><option>JC</option>
+      <option>Kolby</option><option>Jake</option><option>Mike</option><option>JB</option>
+    </select>
+  </div>
+</div>
+
+<div class="dash-top-bar">
+  <div class="date-filter">
+    <label>From</label>
+    <input type="date" id="filter-from" onchange="renderDashboard()"/>
+    <label>To</label>
+    <input type="date" id="filter-to" onchange="renderDashboard()"/>
+    <button class="btn-clear-dates" onclick="clearDates()">Clear</button>
+  </div>
+  <button class="btn-export" onclick="exportCSV()">⬇ Export CSV</button>
+</div>
+
+<div class="stats-row" id="stats-row"></div>
+<div class="dash-section-title">UNITS BY <span>TECH</span> <span style="font-size:.85rem;font-family:'DM Sans',sans-serif;font-weight:400;color:var(--muted);letter-spacing:0;text-transform:none;"> — click for details</span></div>
+<div class="tech-grid" id="tech-grid"></div>
+<hr class="dash-divider"/>
+<div class="dash-section-title">UNITS BY <span>PROJECT</span></div>
+<div id="project-list"></div>
+```
+
+  </div>
+
+  <!-- REPORTS PAGE -->
+
+  <div class="page" id="page-reports">
+    <div class="page-title">INSTALL <span>REPORTS</span></div>
+    <div class="page-sub">// daily · weekly · monthly · per-tech</div>
+    <div class="period-tabs">
+      <button class="period-btn active" onclick="setPeriod('daily',this)">Daily</button>
+      <button class="period-btn" onclick="setPeriod('weekly',this)">Weekly</button>
+      <button class="period-btn" onclick="setPeriod('monthly',this)">Monthly</button>
+      <button class="period-btn" onclick="setPeriod('tech',this)">Per Tech</button>
+    </div>
+    <div id="report-content"></div>
+  </div>
+</div>
+
+<!-- Tech modal -->
+
+<div class="modal-overlay" id="tech-modal" onclick="closeTechModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">TECH <span>DETAIL</span></div>
+      <button class="modal-close" onclick="document.getElementById('tech-modal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbyUDxA7mvpubDQwsMdFdQ9xnJwZmQsocaSDyZHbZIGY1ZdD6WvlODqer4SXyj4NQ_zj/exec';
+
+const TECHS = ['AJ','Josh','Joey','JC','Kolby','Jake','Mike','JB'];
+const DEVICES = ['Service','Hub Only','Hub 3+','Lock','Mortise Lock','Privacy Lock','Passage Lever','New Construction - Lock Adjustment','Low-Volt Thermostat','High-Voltage Thermostat','C-Wire Kit','Add a Wire Kit','Switch 1','Switch 2','Smart Outlet 1','Smart Outlet 2','Doorbell','Transformer','Chime Pro','Leak Sensor 1','Leak Sensor 2','Recessed Door Sensor','Contact Sensor 1','Contact Sensor 2','Smart Plug','Smart Plug 2','Site Readiness Inspection','Chime Power Kit'];
+
+let currentUser = 'User';
+let currentRole = 'admin';
+let allEntries = [];
+let selectedTechs = [];
+let activePeriod = 'daily';
+
+async function api(payload) {
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload),
+    redirect: 'follow'
+  });
+  const text = await res.text();
+  try { return JSON.parse(text); }
+  catch(e) { return { success: false, message: 'Bad response: ' + text.slice(0,100) }; }
+}
+
+async function loadAndRender() {
+  const recentEl = document.getElementById('recent-list');
+  if (recentEl) recentEl.innerHTML = '<div class="spinner-wrap"><div class="spinner"></div>Loading entries...</div>';
+  try {
+    const data = await api({ action: 'getEntries' });
+    if (data.success) {
+      allEntries = data.entries || [];
+      renderRecent();
+    } else {
+      if (recentEl) recentEl.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div>Could not load entries: ' + (data.message||'Unknown error') + '</div>';
+    }
+  } catch(e) {
+    console.error('Load error', e);
+    if (recentEl) recentEl.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div>Connection error. Check your internet and try again.</div>';
+  }
+}
+
+function buildGrid() {
+  document.getElementById('devices-grid').innerHTML = DEVICES.map(d =>
+    `<div class="device-chip" onclick="this.classList.toggle('selected');clearDeviceErr()">
+      <div class="chip-box"><span class="chip-check">✓</span></div>
+      <span class="chip-label">${esc(d)}</span>
+    </div>`).join('');
+}
+
+function getSelected() { return [...document.querySelectorAll('.device-chip.selected')].map(el => el.querySelector('.chip-label').textContent); }
+function clearDevices() { document.querySelectorAll('.device-chip.selected').forEach(el => el.classList.remove('selected')); }
+function clearDeviceErr() { document.getElementById('devices-wrap').classList.remove('field-error'); }
+
+function buildTechMenu() {
+  document.getElementById('tech-menu').innerHTML = TECHS.map(t =>
+    `<div class="tech-menu-item" id="tmenu-${t}" onclick="toggleTech('${t}')">
+      <div class="tech-check-box"><span class="tech-check-mark">✓</span></div>
+      <span class="tech-menu-name">${esc(t)}</span>
+    </div>`).join('');
+}
+
+function toggleTechMenu() {
+  const trigger = document.getElementById('tech-trigger');
+  const menu = document.getElementById('tech-menu');
+  const isOpen = menu.classList.contains('open');
+  if (isOpen) { menu.classList.remove('open'); trigger.classList.remove('open'); }
+  else { menu.classList.add('open'); trigger.classList.add('open'); }
+}
+
+function toggleTech(name) {
+  clearFieldErr('field-tech');
+  const idx = selectedTechs.indexOf(name);
+  if (idx > -1) selectedTechs.splice(idx, 1);
+  else selectedTechs.push(name);
+  refreshTechUI();
+}
+
+function refreshTechUI() {
+  TECHS.forEach(t => {
+    const item = document.getElementById('tmenu-' + t);
+    if (!item) return;
+    selectedTechs.includes(t) ? item.classList.add('selected') : item.classList.remove('selected');
+  });
+  const trigger = document.getElementById('tech-trigger');
+  const placeholder = document.getElementById('tech-placeholder');
+  trigger.querySelectorAll('.tech-tag').forEach(el => el.remove());
+  if (selectedTechs.length === 0) {
+    placeholder.style.display = '';
+  } else {
+    placeholder.style.display = 'none';
+    selectedTechs.forEach(t => {
+      const tag = document.createElement('span');
+      tag.className = 'tech-tag';
+      tag.innerHTML = `${esc(t)}<span class="tech-tag-x" onclick="event.stopPropagation();removeTech('${t}')">✕</span>`;
+      trigger.insertBefore(tag, trigger.querySelector('.tech-trigger-arrow'));
+    });
+  }
+}
+
+function removeTech(name) { selectedTechs = selectedTechs.filter(t => t !== name); refreshTechUI(); }
+function clearTechs() { selectedTechs = []; refreshTechUI(); }
+
+document.addEventListener('click', function(e) {
+  const wrap = document.getElementById('tech-dropdown-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('tech-menu').classList.remove('open');
+    document.getElementById('tech-trigger').classList.remove('open');
+  }
+});
+
+function onPtaskInput() {
+  clearFieldErr('field-ptask');
+  const val = document.getElementById('input-ptask').value.trim();
+  const hint = document.getElementById('autofill-hint');
+  const propField = document.getElementById('input-property');
+  if (!val) { hint.className = 'autofill-hint'; return; }
+  const full = 'PTASK-' + val.toUpperCase();
+  const match = allEntries.find(e => e.ptask && e.ptask.toUpperCase() === full);
+  if (match && match.property) {
+    propField.value = match.property;
+    clearFieldErr('field-property');
+    hint.textContent = `↑ Auto-filled: ${match.property}`;
+    hint.className = 'autofill-hint show';
+  } else {
+    hint.className = 'autofill-hint';
+  }
+}
+
+function clearFieldErr(id) { document.getElementById(id).classList.remove('field-error'); }
+
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'dashboard') renderDashboard();
+  else if (name === 'reports') renderReport();
+  else renderRecent();
+}
+
+function showSuccess(msg) {
+  const b = document.getElementById('alert-success');
+  b.textContent = msg; b.className = 'alert success show';
+  setTimeout(() => b.className = 'alert', 5000);
+}
+
+function norm(s) { return s.trim().toLowerCase().replace(/\s+/g, ' '); }
+function fmtDate(ts) { return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' }); }
+function fmtTime(ts) { return new Date(ts).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }); }
+function fmtDateFull(ts) { return new Date(ts).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }); }
+
+function validate() {
+  const ptaskNum = document.getElementById('input-ptask').value.trim();
+  const prop     = document.getElementById('input-property').value.trim();
+  const addr     = document.getElementById('input-address').value.trim();
+  const devices  = getSelected();
+  const errors   = [];
+
+  ['field-ptask','field-property','field-address','field-tech'].forEach(id => document.getElementById(id).classList.remove('field-error'));
+  document.getElementById('devices-wrap').classList.remove('field-error');
+  document.getElementById('val-banner').classList.remove('show');
+
+  if (!ptaskNum) { document.getElementById('field-ptask').classList.add('field-error'); errors.push('PTASK # is required'); }
+  if (!prop)     { document.getElementById('field-property').classList.add('field-error'); errors.push('Property Name is required'); }
+  if (!addr)     { document.getElementById('field-address').classList.add('field-error'); errors.push('Address / Unit is required'); }
+  if (!selectedTechs.length) { document.getElementById('field-tech').classList.add('field-error'); errors.push('At least one tech must be selected'); }
+  if (!devices.length) { document.getElementById('devices-wrap').classList.add('field-error'); errors.push('At least one device must be selected'); }
+
+  if (errors.length) {
+    document.getElementById('val-list').innerHTML = errors.map(e => `<li>${e}</li>`).join('');
+    document.getElementById('val-banner').classList.add('show');
+    document.getElementById('val-banner').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return false;
+  }
+  return true;
+}
+
+async function submitEntry() {
+  if (!validate()) return;
+
+  const ptask   = ('PTASK-' + document.getElementById('input-ptask').value.trim()).toUpperCase();
+  const prop    = document.getElementById('input-property').value.trim();
+  const addr    = document.getElementById('input-address').value.trim();
+  const notes   = document.getElementById('input-notes').value.trim();
+  const devices = getSelected();
+  const btn     = document.getElementById('submit-btn');
+
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  try {
+    const data = await api({
+      action: 'submit',
+      ptask, property: prop, address: addr,
+      techs: [...selectedTechs],
+      devices, notes,
+      submittedBy: currentUser
+    });
+
+    if (data.success) {
+      ['input-ptask','input-property','input-address'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('input-notes').value = '';
+      document.getElementById('autofill-hint').className = 'autofill-hint';
+      document.getElementById('val-banner').classList.remove('show');
+      clearDevices();
+      clearTechs();
+      document.getElementById('input-ptask').focus();
+      showSuccess(`✔ Recorded: ${addr} → ${ptask} (${selectedTechs.join(', ')}) at ${fmtTime(Date.now())}`);
+      await loadAndRender();
+    } else if (data.message === 'duplicate') {
+      document.getElementById('field-ptask').classList.add('field-error');
+      document.getElementById('field-address').classList.add('field-error');
+      document.getElementById('val-list').innerHTML = `<li>Duplicate: "${addr}" already exists under ${ptask}</li>`;
+      document.getElementById('val-banner').classList.add('show');
+      document.getElementById('val-banner').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      alert('Error saving entry: ' + (data.message || 'Unknown error'));
+    }
+  } catch(e) {
+    alert('Connection error. Please check your internet and try again.');
+  }
+
+  btn.disabled = false;
+  btn.textContent = '✓ Record Unit';
+}
+
+async function delEntry(ts, address, page) {
+  if (!confirm('Remove this entry?')) return;
+  try {
+    await api({ action: 'deleteEntry', ts, address });
+    await loadAndRender();
+    if (page === 'dash') renderDashboard();
+    else if (page === 'report') renderReport();
+  } catch(e) {
+    alert('Error deleting entry.');
+  }
+}
+
+function completedBadge() { return `<span class="sbadge completed"><span class="sbadge-dot" style="background:var(--installed)"></span>Completed</span>`; }
+
+function techPills(entry) {
+  const arr = entry.techs || (entry.tech ? [entry.tech] : []);
+  if (!arr.length) return `<span style="color:var(--muted)">—</span>`;
+  return `<div class="tech-pills">${arr.map(t => `<span class="tech-pill">${esc(t)}</span>`).join('')}</div>`;
+}
+
+function pills(arr) {
+  if (!arr || !arr.length) return `<span style="color:var(--muted);font-size:.78rem">—</span>`;
+  return `<div class="devices-pills">${arr.map(d => `<span class="device-pill">${esc(d)}</span>`).join('')}</div>`;
+}
+
+function renderRecent() {
+  const el = document.getElementById('recent-list');
+  const entries = allEntries;
+  if (!entries.length) {
+    el.innerHTML = `<div class="empty-state"><div class="icon">📋</div>No entries yet. Start logging units above.</div>`;
+    return;
+  }
+  el.innerHTML = `<table class="entries-table">
+    <thead><tr><th>PTASK / Property</th><th>Address / Unit</th><th>Tech(s)</th><th>Devices</th><th>Notes</th><th>Timestamp</th><th></th></tr></thead>
+    <tbody>${entries.slice(0, 50).map(e => `
+      <tr>
+        <td><span class="ptask-badge">${esc(e.ptask)}</span><span class="prop-badge">${esc(e.property || '—')}</span></td>
+        <td>${esc(e.address)}</td>
+        <td>${techPills(e)}</td>
+        <td>${pills(e.devices)}</td>
+        <td><div class="note-text">${esc(e.notes || '—')}</div></td>
+        <td><div class="ts-text">${fmtDate(new Date(e.ts))} ${fmtTime(new Date(e.ts))}</div></td>
+        <td><button class="btn-danger" onclick="delEntry('${e.ts}','${esc(e.address)}','entry')">remove</button></td>
+      </tr>`).join('')}
+    </tbody></table>`;
+}
+
+function getFilteredEntries() {
+  let entries = [...allEntries];
+  const from = document.getElementById('filter-from')?.value;
+  const to   = document.getElementById('filter-to')?.value;
+  if (from) { const d = new Date(from); d.setHours(0,0,0,0); entries = entries.filter(e => new Date(e.ts) >= d); }
+  if (to)   { const d = new Date(to);   d.setHours(23,59,59,999); entries = entries.filter(e => new Date(e.ts) <= d); }
+  return entries;
+}
+function clearDates() { document.getElementById('filter-from').value = ''; document.getElementById('filter-to').value = ''; renderDashboard(); }
+
+function renderDashboard() {
+  const entries = getFilteredEntries();
+  const q = (document.getElementById('dash-search')?.value || '').toLowerCase();
+  const fTech = document.getElementById('filter-tech')?.value || '';
+  const ptasks = [...new Set(entries.map(e => e.ptask))];
+
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Units</div><div class="stat-value">${entries.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Projects</div><div class="stat-value">${ptasks.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Avg / Project</div><div class="stat-value">${ptasks.length ? Math.round(entries.length / ptasks.length) : 0}</div></div>`;
+
+  const techMap = {};
+  TECHS.forEach(t => techMap[t] = 0);
+  entries.forEach(e => { (e.techs || []).forEach(t => { if (techMap[t] !== undefined) techMap[t]++; }); });
+  const maxCount = Math.max(...Object.values(techMap), 1);
+
+  document.getElementById('tech-grid').innerHTML = Object.entries(techMap).sort((a,b) => b[1]-a[1]).map(([name, count]) => `
+    <div class="tech-card" onclick="openTechModal('${esc(name)}')">
+      <div class="tech-card-top">
+        <div class="tech-avatar">${esc(name.slice(0,2).toUpperCase())}</div>
+        <div class="tech-info">
+          <div class="tech-card-name">${esc(name)}</div>
+          <div class="tech-card-count">${count} unit${count !== 1 ? 's' : ''} installed</div>
+        </div>
+      </div>
+      <div class="tech-bar-wrap"><div class="tech-bar" style="width:${Math.round(count/maxCount*100)}%"></div></div>
+    </div>`).join('');
+
+  const grouped = {};
+  entries.forEach(e => {
+    if (!grouped[e.ptask]) grouped[e.ptask] = { property: e.property || '', units: [] };
+    if (e.property) grouped[e.ptask].property = e.property;
+    grouped[e.ptask].units.push(e);
+  });
+
+  const container = document.getElementById('project-list');
+  if (!Object.keys(grouped).length) { container.innerHTML = `<div class="empty-state"><div class="icon">📊</div>No data.</div>`; return; }
+
+  let html = '';
+  Object.keys(grouped).sort().forEach(ptask => {
+    const { property, units } = grouped[ptask];
+    let filtered = units;
+    if (fTech) filtered = filtered.filter(u => (u.techs || []).includes(fTech));
+    if (q) filtered = filtered.filter(u =>
+      ptask.toLowerCase().includes(q) || (property || '').toLowerCase().includes(q) ||
+      u.address.toLowerCase().includes(q) || (u.techs || []).some(t => t.toLowerCase().includes(q)));
+    if (!filtered.length) return;
+
+    html += `<div class="project-block" id="pb-${safeId(ptask)}">
+      <div class="project-header" onclick="toggleProj('pb-${safeId(ptask)}')">
+        <div class="project-name-wrap">
+          <div class="project-name">${esc(ptask)}</div>
+          ${property ? `<div class="project-propname">${esc(property)}</div>` : ''}
+        </div>
+        <div class="project-meta">
+          <span class="unit-count">${filtered.length} unit${filtered.length !== 1 ? 's' : ''}</span>
+          <span class="chevron">▾</span>
+        </div>
+      </div>
+      <div class="project-body">
+        <table class="entries-table" style="margin-top:.8rem">
+          <thead><tr><th>Address / Unit</th><th>Tech(s)</th><th>Devices</th><th>Notes</th><th>Timestamp</th><th></th></tr></thead>
+          <tbody>${filtered.map(u => `
+            <tr>
+              <td>${esc(u.address)}</td>
+              <td>${techPills(u)}</td>
+              <td>${pills(u.devices)}</td>
+              <td><div class="note-text">${esc(u.notes || '—')}</div></td>
+              <td><div class="ts-text">${fmtDate(new Date(u.ts))}<br>${fmtTime(new Date(u.ts))}</div></td>
+              <td><button class="btn-danger" onclick="delEntry('${u.ts}','${esc(u.address)}','dash')">remove</button></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html || `<div class="empty-state"><div class="icon">🔍</div>No results.</div>`;
+}
+
+function openTechModal(techName) {
+  const entries = allEntries.filter(e => (e.techs || []).includes(techName));
+  const ptasks = [...new Set(entries.map(e => e.ptask))];
+  document.getElementById('modal-title').innerHTML = `TECH: <span>${esc(techName)}</span>`;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-stats">
+      <div class="modal-stat"><div class="modal-stat-label">Total Units</div><div class="modal-stat-val">${entries.length}</div></div>
+      <div class="modal-stat"><div class="modal-stat-label">Projects</div><div class="modal-stat-val">${ptasks.length}</div></div>
+      <div class="modal-stat"><div class="modal-stat-label">Avg / Project</div><div class="modal-stat-val">${ptasks.length ? Math.round(entries.length / ptasks.length) : 0}</div></div>
+    </div>
+    ${entries.length ? `<table class="entries-table">
+      <thead><tr><th>PTASK</th><th>Property</th><th>Address</th><th>Status</th><th>Timestamp</th></tr></thead>
+      <tbody>${entries.map(e => `
+        <tr>
+          <td><span class="ptask-badge">${esc(e.ptask)}</span></td>
+          <td style="color:#7aaee8;font-size:.82rem">${esc(e.property || '—')}</td>
+          <td>${esc(e.address)}</td>
+          <td>${completedBadge()}</td>
+          <td><div class="ts-text">${fmtDate(new Date(e.ts))}<br>${fmtTime(new Date(e.ts))}</div></td>
+        </tr>`).join('')}
+      </tbody></table>` : `<div class="empty-state"><div class="icon">📋</div>No installs for ${esc(techName)} yet.</div>`}`;
+  document.getElementById('tech-modal').classList.add('open');
+}
+function closeTechModal(e) { if (e.target === document.getElementById('tech-modal')) document.getElementById('tech-modal').classList.remove('open'); }
+
+function setPeriod(p, btn) {
+  activePeriod = p;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderReport();
+}
+
+function renderReport() {
+  const entries = allEntries;
+  const container = document.getElementById('report-content');
+  if (!entries.length) { container.innerHTML = `<div class="empty-state"><div class="icon">📋</div>No data yet.</div>`; return; }
+  if (activePeriod === 'tech') { renderTechReport(entries, container); return; }
+
+  const groups = {};
+  entries.forEach(e => {
+    const d = new Date(e.ts);
+    let key;
+    if (activePeriod === 'daily') {
+      key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    } else if (activePeriod === 'weekly') {
+      const s = new Date(d); s.setDate(d.getDate() - d.getDay());
+      key = `${s.getFullYear()}-${String(s.getMonth()+1).padStart(2,'0')}-${String(s.getDate()).padStart(2,'0')}`;
+    } else {
+      key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    }
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(e);
+  });
+
+  let html = `<div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+    <button class="btn-export" onclick="exportCSVAll()">⬇ Export All CSV</button></div>`;
+
+  Object.keys(groups).sort((a,b) => b.localeCompare(a)).forEach(key => {
+    const grp = groups[key];
+    const ptasks = [...new Set(grp.map(e => e.ptask))];
+    let label = '';
+    if (activePeriod === 'daily') { label = fmtDateFull(new Date(key + 'T12:00:00').getTime()); }
+    else if (activePeriod === 'weekly') {
+      const start = new Date(key + 'T12:00:00');
+      const end = new Date(start); end.setDate(start.getDate() + 6);
+      label = `Week of ${start.toLocaleDateString('en-US',{month:'short',day:'numeric'})} – ${end.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}`;
+    } else {
+      const [yr, mo] = key.split('-');
+      label = new Date(Number(yr), Number(mo)-1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    }
+
+    html += `<div class="project-block" id="rpt-${safeId(key)}">
+      <div class="project-header" onclick="toggleProj('rpt-${safeId(key)}')">
+        <div class="project-name-wrap">
+          <div class="project-name" style="font-size:1.1rem">${esc(label)}</div>
+          <div class="project-propname">${ptasks.length} project${ptasks.length !== 1 ? 's' : ''} · ${grp.length} unit${grp.length !== 1 ? 's' : ''}</div>
+        </div>
+        <div class="project-meta">
+          <span class="sbadge completed"><span class="sbadge-dot" style="background:var(--installed)"></span>${grp.length} completed</span>
+          <span class="chevron">▾</span>
+        </div>
+      </div>
+      <div class="project-body">
+        <table class="entries-table" style="margin-top:.8rem">
+          <thead><tr><th>PTASK</th><th>Property</th><th>Address</th><th>Tech(s)</th><th>Status</th><th>Devices</th><th>Notes</th><th>Timestamp</th><th></th></tr></thead>
+          <tbody>${grp.map(u => `
+            <tr>
+              <td><span class="ptask-badge">${esc(u.ptask)}</span></td>
+              <td style="color:#7aaee8;font-size:.82rem">${esc(u.property || '—')}</td>
+              <td>${esc(u.address)}</td>
+              <td>${techPills(u)}</td>
+              <td>${completedBadge()}</td>
+              <td>${pills(u.devices)}</td>
+              <td><div class="note-text">${esc(u.notes || '—')}</div></td>
+              <td><div class="ts-text">${fmtDate(new Date(u.ts))}<br>${fmtTime(new Date(u.ts))}</div></td>
+              <td><button class="btn-danger" onclick="delEntry('${u.ts}','${esc(u.address)}','report')">remove</button></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function renderTechReport(entries, container) {
+  let html = `<div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+    <button class="btn-export" onclick="exportCSVAll()">⬇ Export All CSV</button></div>`;
+
+  TECHS.forEach(tech => {
+    const grp = entries.filter(e => (e.techs || []).includes(tech));
+    const ptasks = [...new Set(grp.map(e => e.ptask))];
+    const byPtask = {};
+    grp.forEach(e => {
+      if (!byPtask[e.ptask]) byPtask[e.ptask] = { property: e.property || '', units: [] };
+      byPtask[e.ptask].units.push(e);
+    });
+
+    html += `<div class="project-block" id="tr-${safeId(tech)}">
+      <div class="project-header" onclick="toggleProj('tr-${safeId(tech)}')">
+        <div class="project-name-wrap">
+          <div class="project-name">TECH: ${esc(tech)}</div>
+          <div class="project-propname">${ptasks.length} project${ptasks.length !== 1 ? 's' : ''} · ${grp.length} unit${grp.length !== 1 ? 's' : ''}</div>
+        </div>
+        <div class="project-meta">
+          ${grp.length ? `<span class="sbadge completed"><span class="sbadge-dot" style="background:var(--installed)"></span>${grp.length} completed</span>` : '<span style="color:var(--muted);font-size:.78rem;font-family:\'DM Mono\',monospace;">No entries</span>'}
+          <span class="chevron">▾</span>
+        </div>
+      </div>
+      <div class="project-body">
+        ${grp.length === 0
+          ? `<div class="empty-state" style="padding:1.5rem 0"><div class="icon" style="font-size:1.5rem">📋</div>No installs logged for ${esc(tech)}.</div>`
+          : Object.keys(byPtask).sort().map(ptask => `
+            <div style="margin-top:1rem">
+              <div style="font-family:'DM Mono',monospace;font-size:.78rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;">
+                ${esc(ptask)} · <span style="color:#7aaee8">${esc(byPtask[ptask].property)}</span> · ${byPtask[ptask].units.length} unit${byPtask[ptask].units.length !== 1 ? 's' : ''}
+              </div>
+              <table class="entries-table">
+                <thead><tr><th>Address</th><th>Tech(s)</th><th>Status</th><th>Devices</th><th>Notes</th><th>Timestamp</th><th></th></tr></thead>
+                <tbody>${byPtask[ptask].units.map(u => `
+                  <tr>
+                    <td>${esc(u.address)}</td>
+                    <td>${techPills(u)}</td>
+                    <td>${completedBadge()}</td>
+                    <td>${pills(u.devices)}</td>
+                    <td><div class="note-text">${esc(u.notes || '—')}</div></td>
+                    <td><div class="ts-text">${fmtDate(new Date(u.ts))}<br>${fmtTime(new Date(u.ts))}</div></td>
+                    <td><button class="btn-danger" onclick="delEntry('${u.ts}','${esc(u.address)}','report')">remove</button></td>
+                  </tr>`).join('')}
+                </tbody>
+              </table>
+            </div>`).join('')}
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function exportCSV() { downloadCSV(getFilteredEntries(), 'unit-installs-filtered'); }
+function exportCSVAll() { downloadCSV(allEntries, 'unit-installs-all'); }
+function downloadCSV(entries, filename) {
+  if (!entries.length) { alert('No entries to export.'); return; }
+  const headers = ['PTASK','Property','Address/Unit','Techs','Status','Devices','Notes','Date','Time','SubmittedBy'];
+  const rows = entries.map(e => [
+    e.ptask, e.property || '', e.address,
+    (e.techs || []).join('; '),
+    'Completed',
+    (e.devices || []).join('; '),
+    (e.notes || '').replace(/"/g,"'"),
+    fmtDate(new Date(e.ts)), fmtTime(new Date(e.ts)),
+    e.submittedBy || ''
+  ].map(v => `"${v}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `${filename}-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function toggleProj(id) { document.getElementById(id).classList.toggle('collapsed'); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function safeId(s) { return s.replace(/[^a-zA-Z0-9]/g,'_'); }
+
+window.addEventListener('load', async () => {
+  buildGrid();
+  buildTechMenu();
+  await loadAndRender();
+});
+</script>
+
+</body>
+</html>
