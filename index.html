@@ -13,12 +13,12 @@
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
- 
+
   .spinner-wrap{display:flex;align-items:center;justify-content:center;gap:10px;padding:2rem;color:var(--muted);font-family:'DM Mono',monospace;font-size:.85rem;}
   .spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
   @keyframes spin{to{transform:rotate(360deg);}}
   @keyframes shake{0%{transform:translateX(0);}20%{transform:translateX(-5px);}40%{transform:translateX(5px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}100%{transform:translateX(0);}}
- 
+
   nav{display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;height:60px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
   .nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;color:var(--accent);}
   .nav-brand span{color:var(--muted);font-size:.8rem;font-family:'DM Mono',monospace;letter-spacing:1px;margin-left:8px;}
@@ -26,19 +26,19 @@
   .tab-btn{background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;padding:6px 12px;border-radius:6px;cursor:pointer;transition:all .2s;letter-spacing:.5px;text-transform:uppercase;}
   .tab-btn:hover{color:var(--text);background:var(--surface2);}
   .tab-btn.active{color:var(--accent);background:rgba(240,192,64,.1);}
- 
+
   .page{display:none;padding:2rem 1.5rem;max-width:1020px;margin:0 auto;}
   .page.active{display:block;}
   .page-title{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:2px;line-height:1;}
   .page-title span{color:var(--accent);}
   .page-sub{color:var(--muted);font-size:.82rem;margin-top:4px;font-family:'DM Mono',monospace;margin-bottom:1.8rem;}
- 
+
   .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.8rem;}
   .form-grid{display:grid;grid-template-columns:.9fr 1.5fr 1.5fr 1.2fr;gap:1rem;margin-bottom:1rem;}
   .form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.2rem;}
   .field{display:flex;flex-direction:column;gap:6px;}
   label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;}
- 
+
   input[type="text"],input[type="date"],textarea{
     background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;
     color:var(--text);font-family:'DM Mono',monospace;font-size:.9rem;
@@ -48,11 +48,11 @@
   input[type="text"]::placeholder,textarea::placeholder{color:var(--muted);}
   input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.6);cursor:pointer;}
   textarea{resize:vertical;min-height:60px;font-size:.85rem;}
- 
+
   .ptask-wrap{position:relative;display:flex;align-items:center;}
   .ptask-prefix{position:absolute;left:0;top:0;bottom:0;display:flex;align-items:center;padding:0 10px 0 14px;font-family:'DM Mono',monospace;font-size:.9rem;font-weight:600;color:var(--accent);pointer-events:none;border-right:1px solid var(--border);background:rgba(240,192,64,.07);border-radius:8px 0 0 8px;white-space:nowrap;min-width:88px;}
   .ptask-input{padding-left:102px !important;}
- 
+
   .tech-dropdown-wrap{position:relative;}
   .tech-trigger{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Mono',monospace;font-size:.88rem;padding:10px 36px 10px 14px;cursor:pointer;display:flex;align-items:center;min-height:42px;flex-wrap:wrap;gap:4px;transition:border-color .2s,box-shadow .2s;user-select:none;}
   .tech-trigger:hover{border-color:var(--accent);}
@@ -74,7 +74,7 @@
   .tech-menu-item.selected .tech-check-mark{display:block;}
   .tech-menu-name{color:var(--text);}
   .tech-menu-item.selected .tech-menu-name{color:var(--accent);font-weight:600;}
- 
+
   .field-error input[type="text"],.field-error textarea{border-color:var(--danger)!important;background:rgba(224,85,85,.06)!important;box-shadow:0 0 0 3px rgba(224,85,85,.15)!important;animation:shake .3s ease;}
   .field-error label{color:var(--danger)!important;}
   .field-error .ptask-prefix{border-color:var(--danger);background:rgba(224,85,85,.08);color:var(--danger);}
@@ -85,17 +85,17 @@
   .devices-error-wrap.field-error #devices-grid{border:1.5px solid var(--danger);border-radius:10px;padding:8px;background:rgba(224,85,85,.04);box-shadow:0 0 0 3px rgba(224,85,85,.1);animation:shake .3s ease;}
   .devices-error-wrap .err-msg{display:none;font-size:.7rem;color:var(--danger);font-family:'DM Mono',monospace;margin-top:-4px;margin-bottom:6px;}
   .devices-error-wrap.field-error .err-msg{display:block;}
- 
+
   .autofill-hint{font-size:.72rem;color:var(--accent);font-family:'DM Mono',monospace;margin-top:3px;display:none;}
   .autofill-hint.show{display:block;}
   .field-label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:10px;}
   .field-label em{font-style:normal;font-weight:400;font-size:.7rem;text-transform:none;letter-spacing:0;}
- 
+
   .val-banner{display:none;background:rgba(224,85,85,.1);border:1px solid rgba(224,85,85,.35);border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-family:'DM Mono',monospace;font-size:.82rem;color:#f08080;}
   .val-banner.show{display:flex;align-items:flex-start;gap:10px;}
   .val-banner ul{margin:4px 0 0 16px;}
   .val-banner li{margin-top:2px;}
- 
+
   .devices-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:7px;margin-bottom:1.4rem;}
   .device-chip{display:flex;align-items:center;gap:9px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;cursor:pointer;transition:all .15s;user-select:none;}
   .device-chip:hover{border-color:rgba(240,192,64,.4);background:rgba(240,192,64,.04);}
@@ -106,11 +106,11 @@
   .device-chip.selected .chip-check{display:block;}
   .chip-label{font-size:.82rem;color:var(--text);line-height:1.2;}
   .device-chip.selected .chip-label{color:var(--accent);font-weight:500;}
- 
+
   .alert{padding:10px 14px;border-radius:8px;font-size:.85rem;font-family:'DM Mono',monospace;margin-bottom:1rem;display:none;}
   .alert.show{display:block;}
   .alert.success{background:rgba(76,175,125,.12);border:1px solid rgba(76,175,125,.3);color:#80d4a8;}
- 
+
   .form-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
   .btn-primary{background:var(--accent);color:#111;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.9rem;padding:11px 28px;cursor:pointer;letter-spacing:.5px;transition:all .2s;text-transform:uppercase;}
   .btn-primary:hover{background:#f5ce60;transform:translateY(-1px);}
@@ -121,19 +121,19 @@
   .btn-danger:hover{background:rgba(224,85,85,.1);}
   .btn-export{background:rgba(76,175,125,.12);color:var(--success);border:1px solid rgba(76,175,125,.3);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;padding:9px 18px;cursor:pointer;transition:all .2s;}
   .btn-export:hover{background:rgba(76,175,125,.2);}
- 
+
   .section-label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:12px;margin-top:2rem;}
- 
+
   .sbadge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:4px;font-size:.72rem;font-weight:600;white-space:nowrap;}
   .sbadge-dot{width:6px;height:6px;border-radius:50%;}
   .sbadge.completed{background:rgba(76,175,125,.12);color:var(--installed);border:1px solid rgba(76,175,125,.25);}
- 
+
   .entries-table{width:100%;border-collapse:collapse;font-size:.85rem;}
   .entries-table th{text-align:left;padding:8px 12px;font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;border-bottom:1px solid var(--border);}
   .entries-table td{padding:10px 12px;border-bottom:1px solid rgba(42,45,53,.6);font-family:'DM Mono',monospace;vertical-align:top;}
   .entries-table tr:last-child td{border-bottom:none;}
   .entries-table tr:hover td{background:rgba(255,255,255,.02);}
- 
+
   .ptask-badge{background:rgba(240,192,64,.12);color:var(--accent);border:1px solid rgba(240,192,64,.25);border-radius:4px;padding:2px 8px;font-size:.78rem;font-weight:500;white-space:nowrap;}
   .prop-badge{background:rgba(100,160,255,.08);color:#7aaee8;border:1px solid rgba(100,160,255,.2);border-radius:4px;padding:2px 8px;font-size:.74rem;white-space:nowrap;display:block;margin-top:4px;}
   .tech-pills{display:flex;flex-wrap:wrap;gap:4px;}
@@ -144,7 +144,7 @@
   .device-pill{background:rgba(224,122,48,.12);color:#e8a060;border:1px solid rgba(224,122,48,.2);border-radius:4px;padding:2px 7px;font-size:.72rem;white-space:nowrap;}
   .empty-state{text-align:center;padding:3rem 1rem;color:var(--muted);font-family:'DM Mono',monospace;font-size:.85rem;}
   .empty-state .icon{font-size:2rem;margin-bottom:10px;opacity:.4;}
- 
+
   .dash-top-bar{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;}
   .date-filter{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
   .date-filter label{font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;white-space:nowrap;}
@@ -189,12 +189,12 @@
   .filter-wrap{position:relative;}
   .filter-wrap::after{content:'▾';position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.8rem;pointer-events:none;}
   .filter-wrap select option{background:#1e2128;}
- 
+
   .period-tabs{display:flex;gap:4px;margin-bottom:2rem;flex-wrap:wrap;}
   .period-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:.78rem;padding:7px 16px;border-radius:6px;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.5px;}
   .period-btn:hover{color:var(--text);border-color:var(--muted);}
   .period-btn.active{background:rgba(240,192,64,.1);border-color:var(--accent);color:var(--accent);}
- 
+
   .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;padding:1rem;}
   .modal-overlay.open{display:flex;}
   .modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;max-width:780px;width:100%;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;}
@@ -208,7 +208,7 @@
   .modal-stat{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.9rem 1rem;}
   .modal-stat-label{font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px;}
   .modal-stat-val{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:1px;line-height:1;color:var(--accent);}
- 
+
   @media(max-width:700px){
     .form-grid{grid-template-columns:1fr 1fr;}
     .form-grid-2{grid-template-columns:1fr;}
@@ -228,7 +228,7 @@
 </style>
 </head>
 <body>
- 
+
 <div id="app">
   <nav>
     <div class="nav-brand">TRACKER <span>// UNIT INSTALLS</span></div>
@@ -238,7 +238,7 @@
       <button class="tab-btn" onclick="showPage('reports',this)">📋 Reports</button>
     </div>
   </nav>
- 
+
   <!-- ENTRY PAGE -->
   <div class="page active" id="page-entry">
     <div class="page-title">LOG <span>INSTALL</span></div>
@@ -249,7 +249,7 @@
         <div><strong>Please fix the following:</strong><ul id="val-list"></ul></div>
       </div>
       <div id="alert-success" class="alert"></div>
- 
+
       <div class="form-grid">
         <div class="field" id="field-ptask">
           <label>PTASK #</label>
@@ -282,7 +282,7 @@
           <span class="err-msg">At least one tech is required</span>
         </div>
       </div>
- 
+
       <div class="form-grid-2" style="margin-bottom:1.2rem;">
         <div class="field">
           <label>Notes <em style="font-style:normal;font-size:.7rem;text-transform:none;letter-spacing:0;color:var(--muted)">(optional)</em></label>
@@ -290,13 +290,13 @@
         </div>
         <div></div>
       </div>
- 
+
       <div class="devices-error-wrap" id="devices-wrap">
         <div class="field-label">Devices Installed <em>(at least one required)</em></div>
         <span class="err-msg">Please select at least one device</span>
         <div class="devices-grid" id="devices-grid"></div>
       </div>
- 
+
       <div class="form-actions">
         <button class="btn-primary" id="submit-btn" onclick="submitEntry()">✓ Record Unit</button>
         <button class="btn-ghost" onclick="clearDevices()">Clear Devices</button>
@@ -304,16 +304,16 @@
       </div>
       <div id="conn-status" style="margin-top:8px;font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted);display:none;"></div>
     </div>
- 
+
     <div class="section-label">Recent Entries</div>
     <div class="card" style="padding:0;overflow:hidden;"><div id="recent-list"></div></div>
   </div>
- 
+
   <!-- DASHBOARD PAGE -->
   <div class="page" id="page-dashboard">
     <div class="page-title">PROJECT <span>BREAKDOWN</span></div>
     <div class="page-sub">// live data from Google Sheets · click a tech for details</div>
- 
+
     <div class="dash-filters" style="margin-bottom:1.2rem;">
       <div class="search-bar">
         <span class="search-icon">🔍</span>
@@ -327,7 +327,7 @@
         </select>
       </div>
     </div>
- 
+
     <div class="dash-top-bar">
       <div class="date-filter">
         <label>From</label>
@@ -338,7 +338,7 @@
       </div>
       <button class="btn-export" onclick="exportCSV()">⬇ Export CSV</button>
     </div>
- 
+
     <div class="stats-row" id="stats-row"></div>
     <div class="dash-section-title">UNITS BY <span>TECH</span> <span style="font-size:.85rem;font-family:'DM Sans',sans-serif;font-weight:400;color:var(--muted);letter-spacing:0;text-transform:none;"> — click for details</span></div>
     <div class="tech-grid" id="tech-grid"></div>
@@ -346,7 +346,7 @@
     <div class="dash-section-title">UNITS BY <span>PROJECT</span></div>
     <div id="project-list"></div>
   </div>
- 
+
   <!-- REPORTS PAGE -->
   <div class="page" id="page-reports">
     <div class="page-title">INSTALL <span>REPORTS</span></div>
@@ -360,7 +360,7 @@
     <div id="report-content"></div>
   </div>
 </div>
- 
+
 <!-- Tech modal -->
 <div class="modal-overlay" id="tech-modal" onclick="closeTechModal(event)">
   <div class="modal">
@@ -371,19 +371,19 @@
     <div class="modal-body" id="modal-body"></div>
   </div>
 </div>
- 
+
 <script>
 const API_URL = 'https://script.google.com/macros/s/AKfycbyw1Jcpjjwjq5p312b1ndW3ymy2w0YgU1oncgVK5dJcvPFInoprI_oSOn68ISmGSS7BbA/exec';
- 
+
 const TECHS = ['AJ','Josh','Joey','JC','Kolby','Jake','Mike','JB'];
 const DEVICES = ['Service','Hub Only','Hub 3+','Lock','Mortise Lock','Privacy Lock','Passage Lever','New Construction - Lock Adjustment','Low-Volt Thermostat','High-Voltage Thermostat','C-Wire Kit','Add a Wire Kit','Switch 1','Switch 2','Smart Outlet 1','Smart Outlet 2','Doorbell','Transformer','Chime Pro','Leak Sensor 1','Leak Sensor 2','Recessed Door Sensor','Contact Sensor 1','Contact Sensor 2','Smart Plug','Smart Plug 2','Site Readiness Inspection','Chime Power Kit'];
- 
+
 let currentUser = 'User';
 let currentRole = 'admin';
 let allEntries = [];
 let selectedTechs = [];
 let activePeriod = 'daily';
- 
+
 async function api(payload) {
   try {
     const res = await fetch(API_URL, {
@@ -399,7 +399,7 @@ async function api(payload) {
     return { success: false, message: 'Network error: ' + e.message };
   }
 }
- 
+
 async function loadAndRender() {
   const recentEl = document.getElementById('recent-list');
   if (recentEl) recentEl.innerHTML = '<div class="spinner-wrap"><div class="spinner"></div>Loading entries...</div>';
@@ -416,7 +416,7 @@ async function loadAndRender() {
     if (recentEl) recentEl.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div>Connection error. Check your internet and try again.</div>';
   }
 }
- 
+
 function buildGrid() {
   document.getElementById('devices-grid').innerHTML = DEVICES.map(d =>
     `<div class="device-chip" onclick="this.classList.toggle('selected');clearDeviceErr()">
@@ -424,11 +424,11 @@ function buildGrid() {
       <span class="chip-label">${esc(d)}</span>
     </div>`).join('');
 }
- 
+
 function getSelected() { return [...document.querySelectorAll('.device-chip.selected')].map(el => el.querySelector('.chip-label').textContent); }
 function clearDevices() { document.querySelectorAll('.device-chip.selected').forEach(el => el.classList.remove('selected')); }
 function clearDeviceErr() { document.getElementById('devices-wrap').classList.remove('field-error'); }
- 
+
 function buildTechMenu() {
   document.getElementById('tech-menu').innerHTML = TECHS.map(t =>
     `<div class="tech-menu-item" id="tmenu-${t}" onclick="toggleTech('${t}')">
@@ -436,7 +436,7 @@ function buildTechMenu() {
       <span class="tech-menu-name">${esc(t)}</span>
     </div>`).join('');
 }
- 
+
 function toggleTechMenu() {
   const trigger = document.getElementById('tech-trigger');
   const menu = document.getElementById('tech-menu');
@@ -444,7 +444,7 @@ function toggleTechMenu() {
   if (isOpen) { menu.classList.remove('open'); trigger.classList.remove('open'); }
   else { menu.classList.add('open'); trigger.classList.add('open'); }
 }
- 
+
 function toggleTech(name) {
   clearFieldErr('field-tech');
   const idx = selectedTechs.indexOf(name);
@@ -452,7 +452,7 @@ function toggleTech(name) {
   else selectedTechs.push(name);
   refreshTechUI();
 }
- 
+
 function refreshTechUI() {
   TECHS.forEach(t => {
     const item = document.getElementById('tmenu-' + t);
@@ -474,10 +474,10 @@ function refreshTechUI() {
     });
   }
 }
- 
+
 function removeTech(name) { selectedTechs = selectedTechs.filter(t => t !== name); refreshTechUI(); }
 function clearTechs() { selectedTechs = []; refreshTechUI(); }
- 
+
 document.addEventListener('click', function(e) {
   const wrap = document.getElementById('tech-dropdown-wrap');
   if (wrap && !wrap.contains(e.target)) {
@@ -485,7 +485,7 @@ document.addEventListener('click', function(e) {
     document.getElementById('tech-trigger').classList.remove('open');
   }
 });
- 
+
 function onPtaskInput() {
   clearFieldErr('field-ptask');
   const input = document.getElementById('input-ptask');
@@ -506,9 +506,9 @@ function onPtaskInput() {
     hint.className = 'autofill-hint';
   }
 }
- 
+
 function clearFieldErr(id) { document.getElementById(id).classList.remove('field-error'); }
- 
+
 function showPage(name, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -518,35 +518,35 @@ function showPage(name, btn) {
   else if (name === 'reports') renderReport();
   else renderRecent();
 }
- 
+
 function showSuccess(msg) {
   const b = document.getElementById('alert-success');
   b.textContent = msg; b.className = 'alert success show';
   setTimeout(() => b.className = 'alert', 5000);
 }
- 
+
 function norm(s) { return s.trim().toLowerCase().replace(/\s+/g, ' '); }
 function fmtDate(ts) { return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' }); }
 function fmtTime(ts) { return new Date(ts).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }); }
 function fmtDateFull(ts) { return new Date(ts).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }); }
- 
+
 function validate() {
   const ptaskNum = document.getElementById('input-ptask').value.trim();
   const prop     = document.getElementById('input-property').value.trim();
   const addr     = document.getElementById('input-address').value.trim();
   const devices  = getSelected();
   const errors   = [];
- 
+
   ['field-ptask','field-property','field-address','field-tech'].forEach(id => document.getElementById(id).classList.remove('field-error'));
   document.getElementById('devices-wrap').classList.remove('field-error');
   document.getElementById('val-banner').classList.remove('show');
- 
+
   if (!ptaskNum) { document.getElementById('field-ptask').classList.add('field-error'); errors.push('PTASK # is required'); }
   if (!prop)     { document.getElementById('field-property').classList.add('field-error'); errors.push('Property Name is required'); }
   if (!addr)     { document.getElementById('field-address').classList.add('field-error'); errors.push('Address / Unit is required'); }
   if (!selectedTechs.length) { document.getElementById('field-tech').classList.add('field-error'); errors.push('At least one tech must be selected'); }
   if (!devices.length) { document.getElementById('devices-wrap').classList.add('field-error'); errors.push('At least one device must be selected'); }
- 
+
   if (errors.length) {
     document.getElementById('val-list').innerHTML = errors.map(e => `<li>${e}</li>`).join('');
     document.getElementById('val-banner').classList.add('show');
@@ -555,10 +555,10 @@ function validate() {
   }
   return true;
 }
- 
+
 async function submitEntry() {
   if (!validate()) return;
- 
+
   const rawPtask = document.getElementById('input-ptask').value.trim().replace(/^PTASK-/i,'').replace(/^PTASK/i,'');
   const ptask   = 'PTASK-' + rawPtask.toUpperCase();
   const prop    = document.getElementById('input-property').value.trim();
@@ -566,10 +566,10 @@ async function submitEntry() {
   const notes   = document.getElementById('input-notes').value.trim();
   const devices = getSelected();
   const btn     = document.getElementById('submit-btn');
- 
+
   btn.disabled = true;
   btn.textContent = 'Saving...';
- 
+
   try {
     const data = await api({
       action: 'submit',
@@ -578,7 +578,7 @@ async function submitEntry() {
       devices, notes,
       submittedBy: currentUser
     });
- 
+
     if (data.success) {
       ['input-ptask','input-property','input-address'].forEach(id => document.getElementById(id).value = '');
       document.getElementById('input-notes').value = '';
@@ -604,11 +604,11 @@ async function submitEntry() {
     btn.textContent = '✓ Record Unit';
     return;
   }
- 
+
   btn.disabled = false;
   btn.textContent = '✓ Record Unit';
 }
- 
+
 async function delEntry(ts, address, page) {
   if (!confirm('Remove this entry?')) return;
   try {
@@ -620,20 +620,20 @@ async function delEntry(ts, address, page) {
     alert('Error deleting entry.');
   }
 }
- 
+
 function completedBadge() { return `<span class="sbadge completed"><span class="sbadge-dot" style="background:var(--installed)"></span>Completed</span>`; }
- 
+
 function techPills(entry) {
   const arr = entry.techs || (entry.tech ? [entry.tech] : []);
   if (!arr.length) return `<span style="color:var(--muted)">—</span>`;
   return `<div class="tech-pills">${arr.map(t => `<span class="tech-pill">${esc(t)}</span>`).join('')}</div>`;
 }
- 
+
 function pills(arr) {
   if (!arr || !arr.length) return `<span style="color:var(--muted);font-size:.78rem">—</span>`;
   return `<div class="devices-pills">${arr.map(d => `<span class="device-pill">${esc(d)}</span>`).join('')}</div>`;
 }
- 
+
 function renderRecent() {
   const el = document.getElementById('recent-list');
   const entries = allEntries;
@@ -655,7 +655,7 @@ function renderRecent() {
       </tr>`).join('')}
     </tbody></table>`;
 }
- 
+
 function getFilteredEntries() {
   let entries = [...allEntries];
   const from = document.getElementById('filter-from')?.value;
@@ -665,23 +665,23 @@ function getFilteredEntries() {
   return entries;
 }
 function clearDates() { document.getElementById('filter-from').value = ''; document.getElementById('filter-to').value = ''; renderDashboard(); }
- 
+
 function renderDashboard() {
   const entries = getFilteredEntries();
   const q = (document.getElementById('dash-search')?.value || '').toLowerCase();
   const fTech = document.getElementById('filter-tech')?.value || '';
   const ptasks = [...new Set(entries.map(e => e.ptask))];
- 
+
   document.getElementById('stats-row').innerHTML = `
     <div class="stat-card"><div class="stat-label">Total Units</div><div class="stat-value">${entries.length}</div></div>
     <div class="stat-card"><div class="stat-label">Projects</div><div class="stat-value">${ptasks.length}</div></div>
     <div class="stat-card"><div class="stat-label">Avg / Project</div><div class="stat-value">${ptasks.length ? Math.round(entries.length / ptasks.length) : 0}</div></div>`;
- 
+
   const techMap = {};
   TECHS.forEach(t => techMap[t] = 0);
   entries.forEach(e => { (e.techs || []).forEach(t => { if (techMap[t] !== undefined) techMap[t]++; }); });
   const maxCount = Math.max(...Object.values(techMap), 1);
- 
+
   document.getElementById('tech-grid').innerHTML = Object.entries(techMap).sort((a,b) => b[1]-a[1]).map(([name, count]) => `
     <div class="tech-card" onclick="openTechModal('${esc(name)}')">
       <div class="tech-card-top">
@@ -693,17 +693,17 @@ function renderDashboard() {
       </div>
       <div class="tech-bar-wrap"><div class="tech-bar" style="width:${Math.round(count/maxCount*100)}%"></div></div>
     </div>`).join('');
- 
+
   const grouped = {};
   entries.forEach(e => {
     if (!grouped[e.ptask]) grouped[e.ptask] = { property: e.property || '', units: [] };
     if (e.property) grouped[e.ptask].property = e.property;
     grouped[e.ptask].units.push(e);
   });
- 
+
   const container = document.getElementById('project-list');
   if (!Object.keys(grouped).length) { container.innerHTML = `<div class="empty-state"><div class="icon">📊</div>No data.</div>`; return; }
- 
+
   let html = '';
   Object.keys(grouped).sort().forEach(ptask => {
     const { property, units } = grouped[ptask];
@@ -713,7 +713,7 @@ function renderDashboard() {
       ptask.toLowerCase().includes(q) || (property || '').toLowerCase().includes(q) ||
       u.address.toLowerCase().includes(q) || (u.techs || []).some(t => t.toLowerCase().includes(q)));
     if (!filtered.length) return;
- 
+
     html += `<div class="project-block" id="pb-${safeId(ptask)}">
       <div class="project-header" onclick="toggleProj('pb-${safeId(ptask)}')">
         <div class="project-name-wrap">
@@ -744,7 +744,7 @@ function renderDashboard() {
   });
   container.innerHTML = html || `<div class="empty-state"><div class="icon">🔍</div>No results.</div>`;
 }
- 
+
 function openTechModal(techName) {
   const entries = allEntries.filter(e => (e.techs || []).includes(techName));
   const ptasks = [...new Set(entries.map(e => e.ptask))];
@@ -769,20 +769,20 @@ function openTechModal(techName) {
   document.getElementById('tech-modal').classList.add('open');
 }
 function closeTechModal(e) { if (e.target === document.getElementById('tech-modal')) document.getElementById('tech-modal').classList.remove('open'); }
- 
+
 function setPeriod(p, btn) {
   activePeriod = p;
   document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderReport();
 }
- 
+
 function renderReport() {
   const entries = allEntries;
   const container = document.getElementById('report-content');
   if (!entries.length) { container.innerHTML = `<div class="empty-state"><div class="icon">📋</div>No data yet.</div>`; return; }
   if (activePeriod === 'tech') { renderTechReport(entries, container); return; }
- 
+
   const groups = {};
   entries.forEach(e => {
     const d = new Date(e.ts);
@@ -798,10 +798,10 @@ function renderReport() {
     if (!groups[key]) groups[key] = [];
     groups[key].push(e);
   });
- 
+
   let html = `<div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
     <button class="btn-export" onclick="exportCSVAll()">⬇ Export All CSV</button></div>`;
- 
+
   Object.keys(groups).sort((a,b) => b.localeCompare(a)).forEach(key => {
     const grp = groups[key];
     const ptasks = [...new Set(grp.map(e => e.ptask))];
@@ -815,7 +815,7 @@ function renderReport() {
       const [yr, mo] = key.split('-');
       label = new Date(Number(yr), Number(mo)-1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     }
- 
+
     html += `<div class="project-block" id="rpt-${safeId(key)}">
       <div class="project-header" onclick="toggleProj('rpt-${safeId(key)}')">
         <div class="project-name-wrap">
@@ -849,11 +849,11 @@ function renderReport() {
   });
   container.innerHTML = html;
 }
- 
+
 function renderTechReport(entries, container) {
   let html = `<div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
     <button class="btn-export" onclick="exportCSVAll()">⬇ Export All CSV</button></div>`;
- 
+
   TECHS.forEach(tech => {
     const grp = entries.filter(e => (e.techs || []).includes(tech));
     const ptasks = [...new Set(grp.map(e => e.ptask))];
@@ -862,7 +862,7 @@ function renderTechReport(entries, container) {
       if (!byPtask[e.ptask]) byPtask[e.ptask] = { property: e.property || '', units: [] };
       byPtask[e.ptask].units.push(e);
     });
- 
+
     html += `<div class="project-block" id="tr-${safeId(tech)}">
       <div class="project-header" onclick="toggleProj('tr-${safeId(tech)}')">
         <div class="project-name-wrap">
@@ -902,7 +902,7 @@ function renderTechReport(entries, container) {
   });
   container.innerHTML = html;
 }
- 
+
 function exportCSV() { downloadCSV(getFilteredEntries(), 'unit-installs-filtered'); }
 function exportCSVAll() { downloadCSV(allEntries, 'unit-installs-all'); }
 function downloadCSV(entries, filename) {
@@ -924,11 +924,11 @@ function downloadCSV(entries, filename) {
   a.href = url; a.download = `${filename}-${new Date().toISOString().slice(0,10)}.csv`;
   a.click(); URL.revokeObjectURL(url);
 }
- 
+
 function toggleProj(id) { document.getElementById(id).classList.toggle('collapsed'); }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function safeId(s) { return s.replace(/[^a-zA-Z0-9]/g,'_'); }
- 
+
 async function testConnection() {
   const el = document.getElementById('conn-status');
   el.style.display = 'block';
@@ -948,7 +948,7 @@ async function testConnection() {
     el.textContent = '❌ Connection failed: ' + e.message;
   }
 }
- 
+
 window.addEventListener('load', async () => {
   buildGrid();
   buildTechMenu();
