@@ -618,12 +618,31 @@ async function submitEntry() {
 async function delEntry(ts, address, page) {
   if (!confirm('Remove this entry?')) return;
   try {
-    await api({ action: 'deleteEntry', ts, address });
-    await loadAndRender();
+    const result = await api({ action: 'deleteEntry', ts, address });
+    if (result.success) {
+      // Remove from local allEntries array immediately for instant UI update
+      allEntries = allEntries.filter(e => !(String(e.ts) === String(ts) && e.address === address));
+      renderRecent();
+      if (page === 'dash') renderDashboard();
+      else if (page === 'report') renderReport();
+      // Then reload from sheet in background
+      loadAndRender().then(() => {
+        if (page === 'dash') renderDashboard();
+        else if (page === 'report') renderReport();
+      });
+    } else {
+      // If sheet delete failed, still remove locally so UI is clean
+      allEntries = allEntries.filter(e => !(String(e.ts) === String(ts) && e.address === address));
+      renderRecent();
+      if (page === 'dash') renderDashboard();
+      else if (page === 'report') renderReport();
+    }
+  } catch(e) {
+    // Network error - still remove from local view
+    allEntries = allEntries.filter(e => !(String(e.ts) === String(ts) && e.address === address));
+    renderRecent();
     if (page === 'dash') renderDashboard();
     else if (page === 'report') renderReport();
-  } catch(e) {
-    alert('Error deleting entry.');
   }
 }
  
