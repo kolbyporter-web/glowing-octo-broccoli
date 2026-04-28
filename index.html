@@ -1281,7 +1281,7 @@ function applyReportFilters() {
   // Show summary
   const container = document.getElementById('report-content');
   const summary = document.createElement('div');
-  summary.style.cssText = 'font-family:'DM Mono',monospace;font-size:.78rem;color:var(--accent);margin-bottom:1rem;';
+  summary.style.cssText = "font-family:'DM Mono',monospace;font-size:.78rem;color:var(--accent);margin-bottom:1rem;";
   summary.textContent = `Showing ${entries.length} entr${entries.length!==1?'ies':'y'}${tech?' for '+tech:''}${ptask?' · '+ptask:''}${from||to?' · '+( from?fmtDate(new Date(from+'T12:00:00')):'start')+' → '+(to?fmtDate(new Date(to+'T12:00:00')):'now'):''}`;
   container.prepend(summary);
 }
