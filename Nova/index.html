@@ -14,13 +14,11 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html {
-      height: 100%;
-      height: -webkit-fill-available;
-    }
-    body {
-      height: 100%;
-      height: -webkit-fill-available;
+
+    html, body {
+      /* dvh = dynamic viewport height — shrinks when browser toolbar shows */
+      height: 100dvh;
+      height: 100vh; /* fallback */
       width: 100%;
       background: #111111;
       overflow: hidden;
@@ -28,18 +26,55 @@
       font-family: 'DM Mono', monospace;
       -webkit-font-smoothing: antialiased;
     }
+
     #root {
-      height: 100%;
-      height: -webkit-fill-available;
+      height: 100dvh;
+      height: 100vh;
       width: 100%;
+      max-width: 430px;
+      margin: 0 auto;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
+
     ::-webkit-scrollbar { display: none; }
     * { scrollbar-width: none; }
+
+    /* Prompt to add to home screen on first visit */
+    #home-prompt {
+      display: none;
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1E1E1E;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 12px;
+      color: #AAAAAA;
+      font-family: 'DM Mono', monospace;
+      text-align: center;
+      z-index: 9999;
+      white-space: nowrap;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
   <div id="root"></div>
+  <div id="home-prompt">⬆ Add to Home Screen for best experience</div>
+
+  <script>
+    // Show "add to home screen" hint if in mobile browser (not standalone)
+    if (window.navigator.standalone === false) {
+      var p = document.getElementById('home-prompt');
+      p.style.display = 'block';
+      setTimeout(function() { p.style.display = 'none'; }, 5000);
+    }
+  </script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone@7.24.0/babel.min.js"></script>
@@ -2081,7 +2116,8 @@ function DispatchApp() {
       <div style={{
         display: "flex", borderTop: "1px solid #333333",
         background: "#111111",
-        paddingBottom: "max(env(safe-area-inset-bottom), 20px)",
+        paddingBottom: "max(env(safe-area-inset-bottom), 34px)",
+        flexShrink: 0,
       }}>
         {[
           { id: "jobs",     icon: "📋", label: "JOBS"     },
