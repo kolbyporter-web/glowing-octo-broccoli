@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -14,29 +14,25 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body, #root { height: 100%; width: 100%; background: #111111; overflow: hidden; -webkit-text-size-adjust: 100%; }
-    body { font-family: 'DM Mono', monospace; -webkit-font-smoothing: antialiased; }
+    html, body, #root {
+      height: 100%;
+      height: -webkit-fill-available;
+      width: 100%;
+      background: #111111;
+      overflow: hidden;
+      -webkit-text-size-adjust: 100%;
+    }
+    body {
+      font-family: 'DM Mono', monospace;
+      -webkit-font-smoothing: antialiased;
+      min-height: -webkit-fill-available;
+    }
     ::-webkit-scrollbar { display: none; }
     * { scrollbar-width: none; }
-    #error-display {
-      display: none; position: fixed; inset: 0; background: #111;
-      color: #ff4444; font-family: monospace; font-size: 13px;
-      padding: 20px; overflow: auto; z-index: 9999; white-space: pre-wrap;
-    }
   </style>
 </head>
 <body>
   <div id="root"></div>
-  <div id="error-display"></div>
-
-  <script>
-    window.onerror = function(msg, src, line, col, err) {
-      var d = document.getElementById('error-display');
-      d.style.display = 'block';
-      d.textContent = 'ERROR: ' + msg + '\nLine: ' + line + '\n' + (err && err.stack ? err.stack : '');
-    };
-  </script>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone@7.24.0/babel.min.js"></script>
@@ -2078,6 +2074,7 @@ function DispatchApp() {
       <div style={{
         display: "flex", borderTop: "1px solid #333333",
         background: "#111111",
+        paddingBottom: "env(safe-area-inset-bottom, 16px)",
       }}>
         {[
           { id: "jobs",     icon: "📋", label: "JOBS"     },
