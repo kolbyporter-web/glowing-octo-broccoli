@@ -14,46 +14,11 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      height: 100dvh;
-      height: 100vh;
-      width: 100%;
-      background: #111111;
-      overflow: hidden;
-      -webkit-text-size-adjust: 100%;
-      font-family: 'DM Mono', monospace;
-      -webkit-font-smoothing: antialiased;
-    }
-    #root {
-      height: 100dvh;
-      height: 100vh;
-      width: 100%;
-      max-width: 430px;
-      margin: 0 auto;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
+    html, body { height: 100dvh; height: 100vh; width: 100%; background: #111111; overflow: hidden; -webkit-text-size-adjust: 100%; font-family: 'DM Mono', monospace; -webkit-font-smoothing: antialiased; }
+    #root { height: 100dvh; height: 100vh; width: 100%; max-width: 430px; margin: 0 auto; overflow: hidden; display: flex; flex-direction: column; }
     ::-webkit-scrollbar { display: none; }
     * { scrollbar-width: none; }
-    #home-prompt {
-      display: none;
-      position: fixed;
-      bottom: 90px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1E1E1E;
-      border: 1px solid #333;
-      border-radius: 12px;
-      padding: 12px 18px;
-      font-size: 12px;
-      color: #AAAAAA;
-      font-family: 'DM Mono', monospace;
-      text-align: center;
-      z-index: 9999;
-      white-space: nowrap;
-      pointer-events: none;
-    }
+    #home-prompt { display: none; position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1E1E1E; border: 1px solid #333; border-radius: 12px; padding: 12px 18px; font-size: 12px; color: #AAAAAA; font-family: 'DM Mono', monospace; text-align: center; z-index: 9999; white-space: nowrap; pointer-events: none; }
   </style>
 </head>
 <body>
@@ -408,11 +373,27 @@ function JobDetailScreen({ job, onBack, onUpdate, showToast, timeOff, getTechTim
     };
 
     try {
-      await fetch(APPS_SCRIPT_URL, {
-        method:  "POST",
-        mode:    "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify(payload),
+      // Use GET with URL params — bypasses CORS restrictions completely
+      const params = new URLSearchParams({
+        action:       "dispatch",
+        techName:     tech.name,
+        techEmail:    tech.email,
+        jobId:        job.id,
+        jobTitle:     job.title,
+        address:      job.address,
+        dueDate:      job.dueDate,
+        timeWindow:   job.timeWindow,
+        accessCode:   job.accessCode,
+        contact:      `${job.contact.name} (${job.contact.role}) — ${job.contact.phone}`,
+        hubLocation:  job.hubMount.location,
+        devices:      job.devices.map(d => `${d.name} x${d.qty}`).join(", "),
+        notes:        job.notes,
+        totalDevices: job.devices.reduce((s, d) => s + d.qty, 0),
+      });
+
+      await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, {
+        method: "GET",
+        mode:   "no-cors",
       });
 
       setDispatched(true);
