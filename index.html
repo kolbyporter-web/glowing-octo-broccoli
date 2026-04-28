@@ -1071,7 +1071,7 @@ async function testConnection() {
     const data = await api({ action: 'getEntries' });
     if (data.success) {
       el.style.color = 'var(--success)';
-      el.textContent = '✅ Connected! Google Sheets is reachable. ' + (data.entries?.length || 0) + ' entries found.';
+      el.textContent = '✅ Connected! Google Sheets is reachable.';
     } else {
       el.style.color = 'var(--danger)';
       el.textContent = '❌ Script error: ' + (data.message || 'Unknown error');
