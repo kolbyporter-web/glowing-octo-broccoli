@@ -14,11 +14,9 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html, body {
-      /* dvh = dynamic viewport height — shrinks when browser toolbar shows */
       height: 100dvh;
-      height: 100vh; /* fallback */
+      height: 100vh;
       width: 100%;
       background: #111111;
       overflow: hidden;
@@ -26,7 +24,6 @@
       font-family: 'DM Mono', monospace;
       -webkit-font-smoothing: antialiased;
     }
-
     #root {
       height: 100dvh;
       height: 100vh;
@@ -37,15 +34,12 @@
       display: flex;
       flex-direction: column;
     }
-
     ::-webkit-scrollbar { display: none; }
     * { scrollbar-width: none; }
-
-    /* Prompt to add to home screen on first visit */
     #home-prompt {
       display: none;
       position: fixed;
-      bottom: 80px;
+      bottom: 90px;
       left: 50%;
       transform: translateX(-50%);
       background: #1E1E1E;
@@ -65,16 +59,13 @@
 <body>
   <div id="root"></div>
   <div id="home-prompt">⬆ Add to Home Screen for best experience</div>
-
   <script>
-    // Show "add to home screen" hint if in mobile browser (not standalone)
     if (window.navigator.standalone === false) {
       var p = document.getElementById('home-prompt');
       p.style.display = 'block';
-      setTimeout(function() { p.style.display = 'none'; }, 5000);
+      setTimeout(function() { p.style.display = 'none'; }, 6000);
     }
   </script>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone@7.24.0/babel.min.js"></script>
@@ -393,7 +384,7 @@ function JobDetailScreen({ job, onBack, onUpdate, showToast, timeOff, getTechTim
 
   // ── Apps Script endpoint ──────────────────────────────────────────
   // Replace this URL with your deployed Apps Script web app URL
-  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID_HERE/exec";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwjAUP4U5pKppj8yhRZhu-x4wOypPG1wdj4Ns5NqlEzbEs6p3uBCilBsquixEj6DabQ/exec";
 
   const handleDispatch = async () => {
     if (!tech) return;
