@@ -18,6 +18,14 @@
     #root { height: 100dvh; height: 100vh; width: 100%; overflow: hidden; display: flex; flex-direction: column; }
     ::-webkit-scrollbar { display: none; }
     * { scrollbar-width: none; }
+    @media (min-width: 768px) {
+      .mobile-only { display: none !important; }
+      .app-body { flex-direction: row !important; }
+      .sidebar { display: flex !important; flex-direction: column; width: 220px; min-width: 220px; border-right: 1px solid #1E1E1E; background: #0D0D0D; padding: 16px 0; gap: 2px; }
+    }
+    @media (max-width: 767px) {
+      .sidebar { display: none !important; }
+    }
     #home-prompt { display: none; position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1E1E1E; border: 1px solid #333; border-radius: 12px; padding: 12px 18px; font-size: 12px; color: #AAAAAA; font-family: 'DM Mono', monospace; text-align: center; z-index: 9999; white-space: nowrap; pointer-events: none; }
   </style>
 </head>
@@ -26,8 +34,7 @@
   <div id="home-prompt">⬆ Add to Home Screen for best experience</div>
   <script>
     if (window.navigator.standalone === false && /iphone|ipad|ipod/i.test(navigator.userAgent)) {
-      var p = document.getElementById('home-prompt');
-      p.style.display = 'block';
+      var p = document.getElementById('home-prompt'); p.style.display = 'block';
       setTimeout(function() { p.style.display = 'none'; }, 6000);
     }
   </script>
@@ -1880,87 +1887,18 @@ function DispatchApp() {
       color: "#FFFFFF", position: "relative", overflow: "hidden",
     }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        ::-webkit-scrollbar { display: none; }
-
-        /* ── Desktop layout ── */
-        @media (min-width: 768px) {
-          .mobile-only { display: none !important; }
-          .app-body { flex-direction: row !important; }
-          .sidebar {
-            display: flex !important;
-            flex-direction: column;
-            width: 220px;
-            min-width: 220px;
-            border-right: 1px solid #222222;
-            background: #0D0D0D;
-            padding: 16px 0;
-            gap: 4px;
-          }
-          .sidebar-btn {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            background: none;
-            border: none;
-            color: #555555;
-            font-family: 'DM Mono', monospace;
-            font-size: 13px;
-            letter-spacing: 0.08em;
-            cursor: pointer;
-            transition: all 0.15s;
-            text-align: left;
-            border-left: 3px solid transparent;
-          }
-          .sidebar-btn:hover { color: #AAAAAA; background: #161616; }
-          .sidebar-btn.active { color: #FFFFFF; border-left-color: #FFFFFF; background: #1A1A1A; }
-          .sidebar-icon { font-size: 18px; width: 24px; text-align: center; }
-          .content-area { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-          .main-content { flex: 1; overflow: auto; max-width: 900px; width: 100%; padding: 0; }
-        }
-
-        /* ── Mobile layout ── */
-        @media (max-width: 767px) {
-          .sidebar { display: none !important; }
-          .desktop-only { display: none !important; }
-        }
-      `}</style>
         button { font-family: 'DM Mono', monospace; }
-
-        .chip {
-          background: none; border: 1px solid #3A3A3A; color: #888888;
-          padding: 6px 14px; border-radius: 20px; font-size: 11px;
-          cursor: pointer; white-space: nowrap; transition: all 0.15s;
-          font-family: 'DM Mono', monospace;
-        }
+        .chip { background: none; border: 1px solid #3A3A3A; color: #888888; padding: 6px 14px; border-radius: 20px; font-size: 11px; cursor: pointer; white-space: nowrap; transition: all 0.15s; font-family: 'DM Mono', monospace; }
         .chip.active { background: #2A2A2A; border-color: #555555; color: #FFFFFF; }
-
-        .nav-btn {
-          flex: 1; display: flex; flex-direction: column;
-          align-items: center; justify-content: center; gap: 3px;
-          background: none; border: none; padding: 10px 0 12px;
-          cursor: pointer; color: #666666; font-size: 10px;
-          letter-spacing: 0.1em; transition: color 0.15s;
-          font-family: 'DM Mono', monospace;
-        }
+        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; background: none; border: none; padding: 10px 0 12px; cursor: pointer; color: #666666; font-size: 10px; letter-spacing: 0.1em; transition: color 0.15s; font-family: 'DM Mono', monospace; }
         .nav-btn.active { color: #FFFFFF; }
         .nav-icon { font-size: 21px; }
-
-        .toast {
-          position: fixed; bottom: 86px; left: 50%;
-          transform: translateX(-50%);
-          background: #0A1E30; border: 1px solid #33333388;
-          border-radius: 24px; padding: 10px 20px;
-          font-size: 13px; color: #FFFFFF; z-index: 999;
-          white-space: nowrap; pointer-events: none;
-          animation: fadeUp 0.2s ease;
-        }
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateX(-50%) translateY(6px); }
-          to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
+        .toast { position: fixed; bottom: 86px; left: 50%; transform: translateX(-50%); background: #1A1A1A; border: 1px solid #333333; border-radius: 24px; padding: 10px 20px; font-size: 13px; color: #FFFFFF; z-index: 999; white-space: nowrap; pointer-events: none; animation: fadeUp 0.2s ease; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateX(-50%) translateY(6px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        .sidebar-btn { display: flex; align-items: center; gap: 14px; padding: 13px 22px; background: none; border: none; border-left: 3px solid transparent; color: #555555; font-family: 'DM Mono', monospace; font-size: 13px; letter-spacing: 0.06em; cursor: pointer; transition: all 0.15s; text-align: left; width: 100%; }
+        .sidebar-btn:hover { color: #AAAAAA; background: #141414; }
+        .sidebar-btn.active { color: #FFFFFF; border-left-color: #FFFFFF; background: #1A1A1A; }
+        .sidebar-icon { font-size: 17px; width: 22px; text-align: center; }
       `}</style>
 
       {/* ── Overlay screens ── */}
