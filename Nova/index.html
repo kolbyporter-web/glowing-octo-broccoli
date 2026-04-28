@@ -14,18 +14,25 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body, #root {
+    html {
+      height: 100%;
+      height: -webkit-fill-available;
+    }
+    body {
       height: 100%;
       height: -webkit-fill-available;
       width: 100%;
       background: #111111;
       overflow: hidden;
       -webkit-text-size-adjust: 100%;
-    }
-    body {
       font-family: 'DM Mono', monospace;
       -webkit-font-smoothing: antialiased;
-      min-height: -webkit-fill-available;
+    }
+    #root {
+      height: 100%;
+      height: -webkit-fill-available;
+      width: 100%;
+      overflow: hidden;
     }
     ::-webkit-scrollbar { display: none; }
     * { scrollbar-width: none; }
@@ -1882,7 +1889,7 @@ function DispatchApp() {
         .nav-btn {
           flex: 1; display: flex; flex-direction: column;
           align-items: center; justify-content: center; gap: 3px;
-          background: none; border: none; padding: 10px 0 8px;
+          background: none; border: none; padding: 10px 0 12px;
           cursor: pointer; color: #666666; font-size: 10px;
           letter-spacing: 0.1em; transition: color 0.15s;
           font-family: 'DM Mono', monospace;
@@ -2074,7 +2081,7 @@ function DispatchApp() {
       <div style={{
         display: "flex", borderTop: "1px solid #333333",
         background: "#111111",
-        paddingBottom: "env(safe-area-inset-bottom, 16px)",
+        paddingBottom: "max(env(safe-area-inset-bottom), 20px)",
       }}>
         {[
           { id: "jobs",     icon: "📋", label: "JOBS"     },
