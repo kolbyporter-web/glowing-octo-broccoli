@@ -15,7 +15,7 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100dvh; height: 100vh; width: 100%; background: #111111; overflow: hidden; -webkit-text-size-adjust: 100%; font-family: 'DM Mono', monospace; -webkit-font-smoothing: antialiased; }
-    #root { height: 100dvh; height: 100vh; width: 100%; max-width: 430px; margin: 0 auto; overflow: hidden; display: flex; flex-direction: column; }
+    #root { height: 100dvh; height: 100vh; width: 100%; overflow: hidden; display: flex; flex-direction: column; }
     ::-webkit-scrollbar { display: none; }
     * { scrollbar-width: none; }
     #home-prompt { display: none; position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1E1E1E; border: 1px solid #333; border-radius: 12px; padding: 12px 18px; font-size: 12px; color: #AAAAAA; font-family: 'DM Mono', monospace; text-align: center; z-index: 9999; white-space: nowrap; pointer-events: none; }
@@ -25,7 +25,7 @@
   <div id="root"></div>
   <div id="home-prompt">⬆ Add to Home Screen for best experience</div>
   <script>
-    if (window.navigator.standalone === false) {
+    if (window.navigator.standalone === false && /iphone|ipad|ipod/i.test(navigator.userAgent)) {
       var p = document.getElementById('home-prompt');
       p.style.display = 'block';
       setTimeout(function() { p.style.display = 'none'; }, 6000);
@@ -1874,8 +1874,8 @@ function DispatchApp() {
 
   return (
     <div style={{
-      width: "100%", maxWidth: 430, margin: "0 auto",
-      height: "100vh", display: "flex", flexDirection: "column",
+      width: "100%", height: "100vh",
+      display: "flex", flexDirection: "column",
       background: "#111111", fontFamily: "'DM Mono','Courier New',monospace",
       color: "#FFFFFF", position: "relative", overflow: "hidden",
     }}>
@@ -1883,6 +1883,50 @@ function DispatchApp() {
         @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
         ::-webkit-scrollbar { display: none; }
+
+        /* ── Desktop layout ── */
+        @media (min-width: 768px) {
+          .mobile-only { display: none !important; }
+          .app-body { flex-direction: row !important; }
+          .sidebar {
+            display: flex !important;
+            flex-direction: column;
+            width: 220px;
+            min-width: 220px;
+            border-right: 1px solid #222222;
+            background: #0D0D0D;
+            padding: 16px 0;
+            gap: 4px;
+          }
+          .sidebar-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            color: #555555;
+            font-family: 'DM Mono', monospace;
+            font-size: 13px;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: left;
+            border-left: 3px solid transparent;
+          }
+          .sidebar-btn:hover { color: #AAAAAA; background: #161616; }
+          .sidebar-btn.active { color: #FFFFFF; border-left-color: #FFFFFF; background: #1A1A1A; }
+          .sidebar-icon { font-size: 18px; width: 24px; text-align: center; }
+          .content-area { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+          .main-content { flex: 1; overflow: auto; max-width: 900px; width: 100%; padding: 0; }
+        }
+
+        /* ── Mobile layout ── */
+        @media (max-width: 767px) {
+          .sidebar { display: none !important; }
+          .desktop-only { display: none !important; }
+        }
+      `}</style>
         button { font-family: 'DM Mono', monospace; }
 
         .chip {
@@ -2014,96 +2058,91 @@ function DispatchApp() {
         </div>
       </div>
 
-      {/* ── List content ── */}
-      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column" }}>
+      {/* ── Body (sidebar + content) ── */}
+      <div className="app-body" style={{ flex: 1, display: "flex", overflow: "hidden" }}>
 
-        {activeTab === "jobs" && (
-          <>
-            {/* Filter row */}
-            <div style={{
-              display: "flex", gap: 8, padding: "12px 16px",
-              overflowX: "auto", borderBottom: "1px solid #1E1E1E", flexShrink: 0,
-            }}>
-              {[["all", "All Jobs"], ["unassigned", "Unassigned 🔴"], ["assigned", "Assigned"]].map(([val, label]) => (
-                <button key={val} className={`chip ${filter === val ? "active" : ""}`}
-                  onClick={() => setFilter(val)}>{label}</button>
-              ))}
-            </div>
-
-            <div style={{ flex: 1, overflowY: "auto", padding: "12px 16px" }}>
-              {filteredJobs.length === 0
-                ? <div style={{ textAlign: "center", color: "#666666", padding: 60, fontSize: 14 }}>No jobs</div>
-                : filteredJobs.map(job => <JobCard key={job.id} job={job} onTap={() => openJob(job)} />)
-              }
-            </div>
-          </>
-        )}
-
-        {activeTab === "techs" && (
-          <div style={{ flex: 1, overflowY: "auto", padding: "12px 16px" }}>
-            {techRoster.map(tech => {
-              const count = jobs.filter(j => j.assignedTo === tech.id).length;
-              const sched = jobs.filter(j => j.assignedTo === tech.id && j.status === "scheduled").length;
-              return (
-                <div key={tech.id} onClick={() => openTech(tech)} style={{
-                  display: "flex", alignItems: "center", gap: 14,
-                  background: "#1E1E1E", border: "1px solid #333333",
-                  borderRadius: 16, padding: "16px", marginBottom: 10, cursor: "pointer",
-                }}>
-                  <Avatar tech={tech} size={46} />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 16, color: "#FFFFFF", fontWeight: 500 }}>{tech.name}</div>
-                    <div style={{ fontSize: 12, color: "#888888", marginTop: 3 }}>
-                      {count === 0 ? "No jobs this week" : `${count} job${count !== 1 ? "s" : ""} · ${sched} scheduled`}
-                    </div>
-                  </div>
-                  {count > 0 && (
-                    <div style={{
-                      background: tech.color + "18", border: `1px solid ${tech.color}38`,
-                      borderRadius: 20, padding: "4px 12px",
-                      fontSize: 14, color: tech.color, fontWeight: 600,
-                    }}>{count}</div>
-                  )}
-                  <span style={{ color: "#666666", fontSize: 20, marginLeft: 4 }}>›</span>
-                </div>
-              );
-            })}
+        {/* ── Desktop Sidebar ── */}
+        <div className="sidebar" style={{ display: "none" }}>
+          <div style={{ padding: "8px 20px 16px", borderBottom: "1px solid #1E1E1E", marginBottom: 8 }}>
+            <div style={{ fontSize: 10, color: "#444444", letterSpacing: "0.14em" }}>NAVIGATION</div>
           </div>
-        )}
-        {activeTab === "calendar" && (
-          <CalendarScreen jobs={jobs} techRoster={techRoster} onJobTap={openJob} />
-        )}
-        {activeTab === "settings" && (
-          <SettingsScreen
-            techs={techRoster}
-            onAdd={addTech}
-            onUpdate={updateTech}
-            onRemove={removeTech}
-            showToast={showToast}
-          />
-        )}
-      </div>
+          {[
+            { id: "jobs",     icon: "📋", label: "Jobs"     },
+            { id: "techs",    icon: "👥", label: "Team"     },
+            { id: "calendar", icon: "📅", label: "Calendar" },
+            { id: "settings", icon: "⚙️", label: "Settings" },
+          ].map(tab => (
+            <button key={tab.id}
+              className={`sidebar-btn ${activeTab === tab.id && screen === "list" ? "active" : ""}`}
+              onClick={() => { setActiveTab(tab.id); setScreen("list"); }}>
+              <span className="sidebar-icon">{tab.icon}</span>
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-      {/* ── Bottom Nav ── */}
-      <div style={{
-        display: "flex", borderTop: "1px solid #333333",
-        background: "#111111",
-        paddingBottom: "max(env(safe-area-inset-bottom), 34px)",
-        flexShrink: 0,
-      }}>
-        {[
-          { id: "jobs",     icon: "📋", label: "JOBS"     },
-          { id: "techs",    icon: "👥", label: "TEAM"     },
-          { id: "calendar", icon: "📅", label: "CALENDAR" },
-          { id: "settings", icon: "⚙️", label: "SETTINGS" },
-        ].map(tab => (
-          <button key={tab.id}
-            className={`nav-btn ${activeTab === tab.id && screen === "list" ? "active" : ""}`}
-            onClick={() => { setActiveTab(tab.id); setScreen("list"); }}>
-            <span className="nav-icon">{tab.icon}</span>
-            {tab.label}
-          </button>
-        ))}
+        {/* ── Main content ── */}
+        <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", position: "relative" }}>
+
+          {activeTab === "jobs" && (
+            <>
+              <div style={{ display: "flex", gap: 8, padding: "12px 16px", overflowX: "auto", borderBottom: "1px solid #1E1E1E", flexShrink: 0 }}>
+                {[["all", "All Jobs"], ["unassigned", "Unassigned 🔴"], ["assigned", "Assigned"]].map(([val, label]) => (
+                  <button key={val} className={`chip ${filter === val ? "active" : ""}`} onClick={() => setFilter(val)}>{label}</button>
+                ))}
+              </div>
+              <div style={{ flex: 1, overflowY: "auto", padding: "12px 16px" }}>
+                {filteredJobs.length === 0
+                  ? <div style={{ textAlign: "center", color: "#666666", padding: 60, fontSize: 14 }}>No jobs</div>
+                  : filteredJobs.map(job => <JobCard key={job.id} job={job} onTap={() => openJob(job)} />)
+                }
+              </div>
+            </>
+          )}
+
+          {activeTab === "techs" && (
+            <div style={{ flex: 1, overflowY: "auto", padding: "12px 16px" }}>
+              {techRoster.map(tech => {
+                const count = jobs.filter(j => j.assignedTo === tech.id).length;
+                const sched = jobs.filter(j => j.assignedTo === tech.id && j.status === "scheduled").length;
+                return (
+                  <div key={tech.id} onClick={() => openTech(tech)} style={{ display: "flex", alignItems: "center", gap: 14, background: "#1A1A1A", border: "1px solid #222222", borderRadius: 16, padding: "16px", marginBottom: 10, cursor: "pointer" }}>
+                    <Avatar tech={tech} size={46} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 16, color: "#FFFFFF", fontWeight: 500 }}>{tech.name}</div>
+                      <div style={{ fontSize: 12, color: "#555555", marginTop: 3 }}>{count === 0 ? "No jobs this week" : `${count} job${count !== 1 ? "s" : ""} · ${sched} scheduled`}</div>
+                    </div>
+                    {count > 0 && <div style={{ background: tech.color + "18", border: `1px solid ${tech.color}38`, borderRadius: 20, padding: "4px 12px", fontSize: 14, color: tech.color, fontWeight: 600 }}>{count}</div>}
+                    <span style={{ color: "#333333", fontSize: 20, marginLeft: 4 }}>›</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {activeTab === "calendar" && (
+            <CalendarScreen jobs={jobs} techRoster={techRoster} onJobTap={openJob} />
+          )}
+
+          {activeTab === "settings" && (
+            <SettingsScreen techs={techRoster} onAdd={addTech} onUpdate={updateTech} onRemove={removeTech} showToast={showToast} />
+          )}
+
+          {/* Bottom Nav — mobile only */}
+          <div className="mobile-only" style={{ display: "flex", borderTop: "1px solid #333333", background: "#111111", paddingBottom: "max(env(safe-area-inset-bottom), 34px)", flexShrink: 0 }}>
+            {[
+              { id: "jobs",     icon: "📋", label: "JOBS"     },
+              { id: "techs",    icon: "👥", label: "TEAM"     },
+              { id: "calendar", icon: "📅", label: "CALENDAR" },
+              { id: "settings", icon: "⚙️", label: "SETTINGS" },
+            ].map(tab => (
+              <button key={tab.id} className={`nav-btn ${activeTab === tab.id && screen === "list" ? "active" : ""}`} onClick={() => { setActiveTab(tab.id); setScreen("list"); }}>
+                <span className="nav-icon">{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {toast && <div className="toast">{toast}</div>}
