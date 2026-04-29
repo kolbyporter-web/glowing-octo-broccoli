@@ -1847,20 +1847,20 @@ function LoginScreen({ onAuth }) {
 }
 
 function DispatchApp() {
-  const [authed, setAuthed] = useState(() => sessionStorage.getItem("nova_auth") === "1");
-
-  if (!authed) return <LoginScreen onAuth={() => setAuthed(true)} />;
-
-  const [activeTab, setActiveTab] = useState("jobs");
-  const [screen, setScreen] = useState("list");
-  const [selectedJob, setSelectedJob] = useState(null);
+  const [authed, setAuthed]         = useState(() => sessionStorage.getItem("nova_auth") === "1");
+  const [jobs, setJobs]             = useState(MOCK_JOBS);
+  const [activeTab, setActiveTab]   = useState("jobs");
+  const [screen, setScreen]         = useState("list");
+  const [selectedJob, setSelectedJob]   = useState(null);
   const [selectedTech, setSelectedTech] = useState(null);
-  const [filter, setFilter] = useState("unassigned");
-  const [toast, setToast] = useState(null);
-  const [timeOff, setTimeOff] = useState({});
+  const [filter, setFilter]         = useState("unassigned");
+  const [toast, setToast]           = useState(null);
+  const [timeOff, setTimeOff]       = useState({});
   const [asanaStatus, setAsanaStatus] = useState("idle");
-  // Live editable tech roster
   const [techRoster, setTechRoster] = useState(TECHS);
+
+  // All hooks must be above any conditional returns
+  if (!authed) return <LoginScreen onAuth={() => setAuthed(true)} />;
 
   const addTech = (tech) => {
     setTechRoster(prev => [...prev, tech]);
