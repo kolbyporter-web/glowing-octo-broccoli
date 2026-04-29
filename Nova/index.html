@@ -259,7 +259,6 @@ function BottomSheet({ open, onClose, children, title }) {
 
 // ── Job Card ──────────────────────────────────────────────────────
 function JobCard({ job, onTap }) {
-  const p = PRIORITY[job.priority];
   const tech = getTech(job.assignedTo);
   return (
     <div onClick={onTap} style={{
@@ -267,11 +266,7 @@ function JobCard({ job, onTap }) {
       borderRadius: 16, padding: "16px", marginBottom: 10, cursor: "pointer",
     }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-        <div style={{ display: "flex", gap: 7, alignItems: "center" }}>
-          <span style={{ fontSize: 13 }}>{TYPE_ICON[job.type]}</span>
-          <span style={{ fontSize: 13, color: "#FFFFFF", fontWeight: 600, letterSpacing: "0.06em" }}>{job.id}</span>
-          <span style={{ fontSize: 12, color: p.color }}>· {p.label}</span>
-        </div>
+        <span style={{ fontSize: 13, color: "#FFFFFF", fontWeight: 600, letterSpacing: "0.06em" }}>{job.id}</span>
         <span style={{ fontSize: 13, color: "#888888" }}>Due {job.dueDate}</span>
       </div>
 
@@ -333,7 +328,6 @@ function JobDetailScreen({ job, onBack, onUpdate, showToast, timeOff, getTechTim
   const [dispatching, setDispatching] = useState(false);
   const [overrideDate, setOverrideDate] = useState("");
   const tech = getTech(job.assignedTo);
-  const p = PRIORITY[job.priority];
 
   const handleAssign = (techId) => {
     const updatedJob = { assignedTo: techId, status: techId ? "assigned" : "unassigned" };
@@ -431,7 +425,7 @@ function JobDetailScreen({ job, onBack, onUpdate, showToast, timeOff, getTechTim
           <div style={{ fontSize: 13, color: "#FFFFFF", letterSpacing: "0.08em" }}>{job.id}</div>
           <div style={{ fontSize: 14, color: "#FFFFFF", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{job.title}</div>
         </div>
-        <span style={{ fontSize: 12, color: p.color, background: p.color + "18", padding: "3px 9px", borderRadius: 5, flexShrink: 0 }}>{p.label}</span>
+        <span style={{ color: "#444444", fontSize: 18, flexShrink: 0, marginLeft: 8 }}>›</span>
       </div>
 
       {/* Body */}
@@ -984,7 +978,6 @@ function TechDetailScreen({ tech, jobs, onBack, onJobTap, showToast, timeOff, on
                 ) : selectedJobs.length === 0 ? (
                   <div style={{ color: "#2A4030", fontSize: 12, padding: "6px 0" }}>✓ Available</div>
                 ) : selectedJobs.map((job, i) => {
-                  const p = PRIORITY[job.priority];
                   return (
                     <div key={job.id} onClick={() => onJobTap(job)} style={{
                       borderLeft: `3px solid ${tech.color}`,
@@ -994,9 +987,8 @@ function TechDetailScreen({ tech, jobs, onBack, onJobTap, showToast, timeOff, on
                       marginBottom: i < selectedJobs.length - 1 ? 6 : 0,
                       cursor: "pointer",
                     }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                      <div style={{ marginBottom: 3 }}>
                         <span style={{ fontSize: 11, color: "#FFFFFF", fontWeight: 600 }}>{job.id}</span>
-                        <span style={{ fontSize: 10, color: p.color }}>{p.label}</span>
                       </div>
                       <div style={{ fontSize: 12, color: "#AAAAAA" }}>{job.title}</div>
                       {job.startTime && <div style={{ fontSize: 10, color: "#555555", marginTop: 2 }}>🕐 {job.startTime}</div>}
@@ -1233,7 +1225,6 @@ function CalendarScreen({ jobs, techRoster, onJobTap }) {
             </div>
           ) : selectedJobs.map(job => {
             const tech = job.assignedTo ? techRoster.find(t => t.id === job.assignedTo) : null;
-            const p = PRIORITY[job.priority];
             return (
               <div key={job.id} onClick={() => onJobTap(job)} style={{
                 background: "#1E1E1E", border: "1px solid #2A2A2A",
@@ -1241,9 +1232,8 @@ function CalendarScreen({ jobs, techRoster, onJobTap }) {
                 cursor: "pointer",
                 borderLeft: tech ? `3px solid ${tech.color}` : "3px solid #FF2D55",
               }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <div style={{ marginBottom: 6 }}>
                   <span style={{ fontSize: 11, color: "#FFFFFF", letterSpacing: "0.06em" }}>{job.id}</span>
-                  <span style={{ fontSize: 10, color: p.color }}>{p.label}</span>
                 </div>
                 <div style={{ fontSize: 14, color: "#FFFFFF", fontWeight: 500, marginBottom: 4 }}>{job.title}</div>
                 <div style={{ fontSize: 11, color: "#666666", marginBottom: 8 }}>📍 {job.address}</div>
