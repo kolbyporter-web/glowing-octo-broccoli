@@ -23,9 +23,7 @@
       .app-body { flex-direction: row !important; }
       .sidebar { display: flex !important; flex-direction: column; width: 220px; min-width: 220px; border-right: 1px solid #1E1E1E; background: #0D0D0D; padding: 16px 0; gap: 2px; }
     }
-    @media (max-width: 767px) {
-      .sidebar { display: none !important; }
-    }
+    @media (max-width: 767px) { .sidebar { display: none !important; } }
     #home-prompt { display: none; position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1E1E1E; border: 1px solid #333; border-radius: 12px; padding: 12px 18px; font-size: 12px; color: #AAAAAA; font-family: 'DM Mono', monospace; text-align: center; z-index: 9999; white-space: nowrap; pointer-events: none; }
   </style>
 </head>
@@ -1912,6 +1910,13 @@ function DispatchApp() {
             timeOff={timeOff}
             getTechTimeOffForWeek={getTechTimeOffForWeek}
             jobDateKey={selectedJob?.dateKey}
+            onDispatched={() => {
+              setTimeout(() => {
+                setScreen("list");
+                setActiveTab("jobs");
+                setFilter("unassigned");
+              }, 1500);
+            }}
           />
         </div>
       )}
