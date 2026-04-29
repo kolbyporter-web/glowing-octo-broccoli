@@ -1868,6 +1868,8 @@ function NovaApp() {
     setToast(msg);
     setTimeout(() => setToast(null), 2800);
   };
+
+  const addTech = (tech) => {
     setTechRoster(prev => [...prev, tech]);
   };
   const updateTech = (id, updated) => {
