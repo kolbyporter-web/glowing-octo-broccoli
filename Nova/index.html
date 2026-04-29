@@ -1765,17 +1765,15 @@ function SettingsScreen({ techs, onAdd, onUpdate, onRemove, showToast }) {
 }
 
 // ── Main App ──────────────────────────────────────────────────────
-function DispatchApp() {
-  const PASS = "KnuckleHeadz";
-  const [authed, setAuthed] = useState(() => sessionStorage.getItem("nova_auth") === "1");
+function LoginScreen({ onAuth }) {
   const [pwInput, setPwInput] = useState("");
   const [pwError, setPwError] = useState(false);
   const [showPw, setShowPw] = useState(false);
 
   const handleLogin = () => {
-    if (pwInput === PASS) {
+    if (pwInput === "KnuckleHeadz") {
       sessionStorage.setItem("nova_auth", "1");
-      setAuthed(true);
+      onAuth();
     } else {
       setPwError(true);
       setPwInput("");
@@ -1783,75 +1781,76 @@ function DispatchApp() {
     }
   };
 
-  if (!authed) {
-    return (
-      <div style={{
-        height: "100vh", width: "100%", background: "#111111",
-        display: "flex", flexDirection: "column",
-        alignItems: "center", justifyContent: "center",
-        fontFamily: "'DM Mono', monospace", padding: "0 32px",
-      }}>
-        {/* Logo */}
-        <div style={{ marginBottom: 48, textAlign: "center" }}>
-          <div style={{
-            width: 64, height: 64, borderRadius: 18, background: "#1E1E1E",
-            border: "1px solid #333333", display: "flex", alignItems: "center",
-            justifyContent: "center", fontSize: 32, margin: "0 auto 16px",
-          }}>⚡</div>
-          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 32, fontWeight: 800, color: "#FFFFFF", letterSpacing: "0.06em" }}>NOVA</div>
-          <div style={{ fontSize: 12, color: "#444444", marginTop: 4, letterSpacing: "0.1em" }}>SMART TECH INSTALLS</div>
-        </div>
-
-        {/* Password field */}
-        <div style={{ width: "100%", maxWidth: 320 }}>
-          <div style={{ fontSize: 11, color: "#555555", letterSpacing: "0.12em", marginBottom: 8 }}>PASSWORD</div>
-          <div style={{ position: "relative" }}>
-            <input
-              type={showPw ? "text" : "password"}
-              value={pwInput}
-              onChange={e => setPwInput(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && handleLogin()}
-              placeholder="Enter password"
-              autoFocus
-              style={{
-                width: "100%", background: "#1A1A1A",
-                border: `1px solid ${pwError ? "#FF2D55" : "#2A2A2A"}`,
-                borderRadius: 12, color: "#FFFFFF",
-                fontSize: 16, padding: "14px 48px 14px 16px",
-                outline: "none", fontFamily: "'DM Mono', monospace",
-                transition: "border-color 0.2s",
-              }}
-            />
-            <button onClick={() => setShowPw(v => !v)} style={{
-              position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)",
-              background: "none", border: "none", color: "#555555", cursor: "pointer", fontSize: 16,
-            }}>{showPw ? "🙈" : "👁"}</button>
-          </div>
-
-          {pwError && (
-            <div style={{ fontSize: 12, color: "#FF2D55", marginTop: 8, textAlign: "center" }}>
-              Incorrect password — try again
-            </div>
-          )}
-
-          <button onClick={handleLogin} style={{
-            width: "100%", marginTop: 14,
-            background: "#FFFFFF", border: "none", borderRadius: 12,
-            padding: "14px", fontSize: 15, fontWeight: 700,
-            color: "#111111", cursor: "pointer", letterSpacing: "0.04em",
-          }}>
-            Enter Nova
-          </button>
-        </div>
-
-        <div style={{ position: "absolute", bottom: 32, fontSize: 11, color: "#2A2A2A", letterSpacing: "0.08em" }}>
-          DISPATCH PLATFORM · INTERNAL USE ONLY
-        </div>
+  return (
+    <div style={{
+      height: "100vh", width: "100%", background: "#111111",
+      display: "flex", flexDirection: "column",
+      alignItems: "center", justifyContent: "center",
+      fontFamily: "'DM Mono', monospace", padding: "0 32px",
+    }}>
+      <div style={{ marginBottom: 48, textAlign: "center" }}>
+        <div style={{
+          width: 64, height: 64, borderRadius: 18, background: "#1E1E1E",
+          border: "1px solid #333333", display: "flex", alignItems: "center",
+          justifyContent: "center", fontSize: 32, margin: "0 auto 16px",
+        }}>⚡</div>
+        <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 32, fontWeight: 800, color: "#FFFFFF", letterSpacing: "0.06em" }}>NOVA</div>
+        <div style={{ fontSize: 12, color: "#444444", marginTop: 4, letterSpacing: "0.1em" }}>SMART TECH INSTALLS</div>
       </div>
-    );
-  }
 
-  const [jobs, setJobs] = useState(MOCK_JOBS);
+      <div style={{ width: "100%", maxWidth: 320 }}>
+        <div style={{ fontSize: 11, color: "#555555", letterSpacing: "0.12em", marginBottom: 8 }}>PASSWORD</div>
+        <div style={{ position: "relative" }}>
+          <input
+            type={showPw ? "text" : "password"}
+            value={pwInput}
+            onChange={e => setPwInput(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && handleLogin()}
+            placeholder="Enter password"
+            autoFocus
+            style={{
+              width: "100%", background: "#1A1A1A",
+              border: `1px solid ${pwError ? "#FF2D55" : "#2A2A2A"}`,
+              borderRadius: 12, color: "#FFFFFF",
+              fontSize: 16, padding: "14px 48px 14px 16px",
+              outline: "none", fontFamily: "'DM Mono', monospace",
+              transition: "border-color 0.2s",
+            }}
+          />
+          <button onClick={() => setShowPw(v => !v)} style={{
+            position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)",
+            background: "none", border: "none", color: "#555555", cursor: "pointer", fontSize: 16,
+          }}>{showPw ? "🙈" : "👁"}</button>
+        </div>
+
+        {pwError && (
+          <div style={{ fontSize: 12, color: "#FF2D55", marginTop: 8, textAlign: "center" }}>
+            Incorrect password — try again
+          </div>
+        )}
+
+        <button onClick={handleLogin} style={{
+          width: "100%", marginTop: 14,
+          background: "#FFFFFF", border: "none", borderRadius: 12,
+          padding: "14px", fontSize: 15, fontWeight: 700,
+          color: "#111111", cursor: "pointer", letterSpacing: "0.04em",
+        }}>
+          Enter Nova
+        </button>
+      </div>
+
+      <div style={{ position: "absolute", bottom: 32, fontSize: 11, color: "#2A2A2A", letterSpacing: "0.08em" }}>
+        DISPATCH PLATFORM · INTERNAL USE ONLY
+      </div>
+    </div>
+  );
+}
+
+function DispatchApp() {
+  const [authed, setAuthed] = useState(() => sessionStorage.getItem("nova_auth") === "1");
+
+  if (!authed) return <LoginScreen onAuth={() => setAuthed(true)} />;
+
   const [activeTab, setActiveTab] = useState("jobs");
   const [screen, setScreen] = useState("list");
   const [selectedJob, setSelectedJob] = useState(null);
