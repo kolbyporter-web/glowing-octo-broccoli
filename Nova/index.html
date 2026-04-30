@@ -2029,8 +2029,10 @@ function NovaApp() {
       {/* ── Header ── */}
       <div style={{
         padding: "15px 18px 12px",
+        paddingTop: "max(15px, calc(env(safe-area-inset-top) + 10px))",
         borderBottom: "1px solid #333333",
         display: "flex", alignItems: "center", justifyContent: "space-between",
+        flexShrink: 0,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{
