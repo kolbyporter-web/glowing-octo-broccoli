@@ -36,7 +36,7 @@
   .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.8rem;}
   .form-grid{display:grid;grid-template-columns:1fr;gap:1rem;margin-bottom:1rem;}
   .form-grid-top{display:grid;grid-template-columns:.9fr;gap:1rem;margin-bottom:1rem;}
-  .form-grid-bottom{display:grid;grid-template-columns:1.5fr 1.5fr 1.2fr;gap:1rem;margin-bottom:1rem;}
+  .form-grid-bottom{display:grid;grid-template-columns:1fr;gap:1rem;margin-bottom:1rem;}
   .form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.2rem;}
   .field{display:flex;flex-direction:column;gap:6px;}
   label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-family:'DM Mono',monospace;}
@@ -236,6 +236,9 @@
   .btn-remove-tech:hover{background:rgba(224,85,85,.1);}
 
   @media(max-width:700px){
+    #field-address{grid-column:1;}
+    #field-tech{grid-column:1;}
+    [style*="grid-template-columns:1fr 2fr"]{grid-template-columns:1fr !important;}
     .form-grid-top{grid-template-columns:1fr;}
     .form-grid-bottom{grid-template-columns:1fr;}
     .form-grid-2{grid-template-columns:1fr;}
@@ -303,7 +306,8 @@
       </div>
       <div id="alert-success" class="alert"></div>
 
-      <div class="form-grid-top">
+      <!-- Row 1: PTASK + Property -->
+      <div style="display:grid;grid-template-columns:1fr 2fr;gap:1rem;margin-bottom:1rem;">
         <div class="field" id="field-ptask">
           <label>PTASK #</label>
           <div class="ptask-wrap">
@@ -313,17 +317,19 @@
           <span class="autofill-hint" id="autofill-hint"></span>
           <span class="err-msg">PTASK # is required</span>
         </div>
-      </div>
-      <div class="form-grid-bottom">
         <div class="field" id="field-property">
           <label>Property Name</label>
           <input type="text" id="input-property" placeholder="e.g. Riverside Apts" oninput="clearFieldErr('field-property')"/>
           <span class="err-msg">Property Name is required</span>
         </div>
+      </div>
+
+      <!-- Row 2: Unit + Tech -->
+      <div style="display:grid;grid-template-columns:1fr 2fr;gap:1rem;margin-bottom:1rem;">
         <div class="field" id="field-address">
-          <label>Address / Unit</label>
-          <input type="text" id="input-address" placeholder="e.g. 204B Oak Street" oninput="clearFieldErr('field-address')"/>
-          <span class="err-msg">Address / Unit is required</span>
+          <label>Unit</label>
+          <input type="text" id="input-address" placeholder="e.g. 204B" oninput="clearFieldErr('field-address')"/>
+          <span class="err-msg">Unit is required</span>
         </div>
         <div class="field" id="field-tech">
           <label>Tech(s)</label>
@@ -338,18 +344,15 @@
         </div>
       </div>
 
-      <div class="form-grid-2" style="margin-bottom:1.2rem;">
-        <div class="field">
-          <label>Notes <em style="font-style:normal;font-size:.7rem;text-transform:none;letter-spacing:0;color:var(--muted)">(optional)</em></label>
-          <textarea id="input-notes" placeholder="e.g. Customer wasn't home, needs follow-up..."></textarea>
-        </div>
-        <div></div>
-      </div>
-
       <div class="devices-error-wrap" id="devices-wrap">
         <div class="field-label">Devices Installed <em>(at least one required)</em></div>
         <span class="err-msg">Please select at least one device</span>
         <div class="devices-grid" id="devices-grid"></div>
+      </div>
+
+      <div class="field" style="margin-bottom:1.2rem;">
+        <label>Notes <em style="font-style:normal;font-size:.7rem;text-transform:none;letter-spacing:0;color:var(--muted)">(optional)</em></label>
+        <textarea id="input-notes" placeholder="e.g. Customer wasn't home, needs follow-up..."></textarea>
       </div>
 
       <div class="form-actions">
